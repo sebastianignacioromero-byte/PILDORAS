@@ -2,6 +2,64 @@
 
 Web informativa para pacientes: ¿se puede partir este comprimido? Un proyecto de Farmacias Curie.
 
-- Contexto del proyecto: `docs/contexto/`
-- Decisiones de diseño: `docs/superpowers/specs/2026-10-30-pildoras-diseno-visual.md`
-- Maqueta de las direcciones visuales: `docs/diseno/direcciones-de-diseno.html` (se eligió la opción C · Blíster)
+Sitio estático hecho con [Astro](https://astro.build), publicado en GitHub Pages. Los datos vienen de Supabase al construir el sitio; mientras no esté conectado, se usan fichas ficticias de ejemplo.
+
+## Documentación
+
+- Especificación vigente: `docs/superpowers/specs/2026-10-30-pildoras-v1-design.md`
+- Dirección visual (C · Blíster): `docs/superpowers/specs/2026-10-30-pildoras-diseno-visual.md` y `docs/diseno/direcciones-de-diseno.html`
+- Plan de implementación: `docs/superpowers/plans/2026-10-30-pildoras-v1.md`
+- Contexto histórico: `docs/contexto/`
+
+## Trabajar en local
+
+Requiere Node 22.12 o superior.
+
+```bash
+npm install
+```
+
+```bash
+npm run dev
+```
+
+El sitio queda en `http://localhost:4321/PILDORAS/`.
+
+```bash
+npm test
+```
+
+```bash
+npm run test:e2e
+```
+
+## Variables de entorno
+
+| Variable | Para qué | Valor por defecto |
+|---|---|---|
+| `DATOS_FUENTE` | `ejemplo` o `supabase` | `ejemplo` |
+| `PUBLIC_SUPABASE_URL` | URL del proyecto Supabase | — |
+| `PUBLIC_SUPABASE_ANON_KEY` | Clave `anon` (pública, protegida por RLS) | — |
+| `SITIO_URL` | Dominio del sitio | `https://sebastianignacioromero-byte.github.io` |
+| `SITIO_BASE` | Ruta base | `/PILDORAS` |
+
+Nunca use la clave `service_role` en este repositorio: es público.
+
+## Base de datos (Supabase)
+
+1. Cree un proyecto en Supabase.
+2. En el SQL Editor ejecute `supabase/schema_partibilidad.sql` y después `supabase/migracion_web_seo.sql`.
+3. Regístrese en el sitio de Supabase con su correo y conviértase en administrador: `update perfiles set rol = 'admin' where id = '<su uuid>';`
+
+Para probar el SQL en local (requiere PostgreSQL 16): `supabase/verificar.sh`.
+
+## Publicación
+
+GitHub Actions (`.github/workflows/deploy.yml`) prueba, construye y publica en cada push a `main`, todos los días a las 06:17 UTC y a pedido desde la pestaña *Actions*.
+
+- **Conectar Supabase:** en *Settings → Secrets and variables → Actions → Variables*, cree `DATOS_FUENTE=supabase`, `PUBLIC_SUPABASE_URL` y `PUBLIC_SUPABASE_ANON_KEY`.
+- **Pasar al subdominio de Curie:** cree `public/CNAME` con el dominio (por ejemplo `pildoras.farmaciascurie.cl`), defina las variables `SITIO_URL=https://pildoras.farmaciascurie.cl` y `SITIO_BASE=/`, y configure el registro CNAME en el DNS de Curie apuntando a `sebastianignacioromero-byte.github.io`.
+
+## Datos editables
+
+Nombre del QF, WhatsApp, web de Curie y correo para reportar errores: `src/config.ts` (los valores marcados `PROVISIONAL` deben confirmarse).
