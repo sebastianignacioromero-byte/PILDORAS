@@ -1,0 +1,429 @@
+<title>Píldoras · Direcciones de diseño</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Figtree:wght@400;500;600;700;800&family=Archivo:wght@400;500;600;700&family=Archivo+Narrow:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: página de presentación con pestañas; cada dirección muestra concepto + dos pantallas de teléfono (Inicio y Ficha) */
+:root{
+  --bg:#f4f6f6; --fg:#16201f; --muted:#5b6a68; --line:#d6dedd; --surface:#ffffff; --accent:#0b6f68;
+  --f-ui:"Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#101615; --fg:#e6eeec; --muted:#9aaba8; --line:#2a3634; --surface:#18201f; --accent:#5cc2b8; color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#101615; --fg:#e6eeec; --muted:#9aaba8; --line:#2a3634; --surface:#18201f; --accent:#5cc2b8; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg); color:var(--fg); font-family:var(--f-ui); font-size:15px; line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:28px 48px}
+.wrap{max-width:1180px; margin:0 auto; display:grid; gap:24px}
+.top{display:grid; gap:6px}
+.top .eyebrow{font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600}
+.top h1{margin:0; font-size:clamp(24px,3.4vw,34px); line-height:1.15; text-wrap:balance}
+.top p{margin:0; color:var(--muted); max-width:68ch}
+.tabs{display:flex; flex-wrap:wrap; gap:8px}
+.tab{font:inherit; font-weight:600; border:1px solid var(--line); background:var(--surface); color:var(--fg);
+  padding:10px 16px; border-radius:999px; cursor:pointer; display:flex; gap:8px; align-items:center}
+.tab .k{font-size:12px; color:var(--muted); font-weight:700}
+.tab[aria-selected="true"]{background:var(--fg); color:var(--bg); border-color:var(--fg)}
+.tab[aria-selected="true"] .k{color:var(--bg); opacity:.7}
+.tab:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+
+.opt{display:grid; grid-template-columns:minmax(0,300px) minmax(0,1fr); gap:28px; align-items:start}
+@media (max-width:900px){.opt{grid-template-columns:minmax(0,1fr)}}
+.concept{display:grid; gap:14px; position:sticky; top:16px}
+@media (max-width:900px){.concept{position:static}}
+.concept h2{margin:0; font-size:22px; line-height:1.2}
+.concept p{margin:0; color:var(--muted)}
+.concept h3{margin:6px 0 0; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.concept ul{margin:0; padding-left:18px; display:grid; gap:4px}
+.swatches{display:flex; flex-wrap:wrap; gap:8px}
+.sw{display:grid; gap:4px; font-size:11px; color:var(--muted); font-variant-numeric:tabular-nums}
+.sw i{display:block; width:44px; height:32px; border-radius:6px; border:1px solid var(--line)}
+.fonts{display:grid; gap:4px; font-size:14px}
+.fonts span{color:var(--muted); font-size:12px}
+
+.screens{display:flex; flex-wrap:wrap; gap:24px; justify-content:center; align-items:flex-start; min-width:0}
+.screen{display:grid; gap:8px; justify-items:center}
+.screen > .lbl{font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600}
+.phone{width:360px; max-width:100%; border-radius:30px; border:10px solid #1c2322; overflow:hidden;
+  box-shadow:0 20px 50px -24px rgba(0,0,0,.35); background:#1c2322}
+.note{font-size:13px; color:var(--muted); border-top:1px solid var(--line); padding-top:14px}
+
+/* ===== Piezas comunes del sitio (estructura idéntica, cada skin la viste distinto) ===== */
+.site{color:var(--s-ink); background:var(--s-bg); font-family:var(--s-body); font-size:15px; line-height:1.5}
+.site *{margin:0}
+.s-head{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px 18px}
+.s-brand{display:flex; align-items:center; gap:8px; font-family:var(--s-display); font-weight:700; font-size:20px}
+.s-brand svg{width:28px; height:28px; flex:none}
+.s-by{font-size:11px; line-height:1.25; text-align:right}
+.s-body{padding:20px 18px 24px; display:grid; gap:18px}
+.s-h1{font-family:var(--s-display); text-wrap:balance}
+.s-search{display:flex; align-items:center; gap:10px; padding:12px 14px}
+.s-search svg{width:18px; height:18px; flex:none}
+.s-search .q{flex:1; min-width:0}
+.s-search .caret{display:inline-block; width:2px; height:1.1em; background:currentColor; vertical-align:-2px; margin-left:1px}
+.s-results{list-style:none; padding:0; display:grid}
+.s-res{display:grid; grid-template-columns:52px minmax(0,1fr); gap:12px; align-items:center; padding:12px 0}
+.s-res .ill svg{width:52px; height:32px; display:block}
+.s-res .n{font-weight:700; line-height:1.25}
+.s-res .d{font-size:13px; opacity:.75}
+.s-res .chip{margin-top:6px}
+.chip{display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:700; line-height:1}
+.chip svg{width:14px; height:14px; flex:none}
+.s-quick{display:flex; flex-wrap:wrap; gap:8px}
+.s-quick a{text-decoration:none; color:inherit; font-size:13px; font-weight:600}
+.s-aviso{font-size:12.5px; line-height:1.45}
+.s-crumb{font-size:12.5px}
+.seal{display:grid; grid-template-columns:auto minmax(0,1fr); gap:12px; align-items:center}
+.seal .ic svg{display:block}
+.seal .v{font-family:var(--s-display); font-weight:800; line-height:1.15}
+.seal .sub{font-size:13px}
+.s-rev{font-size:12px; display:flex; align-items:center; gap:6px}
+.s-fig{display:grid; justify-items:center; gap:6px}
+.s-fig svg{width:100%; max-width:240px; height:auto}
+.s-fig figcaption{font-size:11.5px}
+.s-dl{display:grid; grid-template-columns:auto minmax(0,1fr)}
+.s-dl dt,.s-dl dd{padding:8px 0; font-size:14px}
+.s-dl dt{opacity:.75; padding-right:12px}
+.s-dl dd{font-weight:600; text-align:right}
+.s-crit{display:grid; gap:6px}
+.s-crit .code{font-family:var(--s-mono); font-size:11.5px; letter-spacing:.04em}
+.s-crit .t{font-weight:700}
+.s-crit p{font-size:14px}
+.s-others{display:grid; gap:0; list-style:none; padding:0}
+.s-others li{display:flex; justify-content:space-between; align-items:center; gap:10px; padding:10px 0; font-size:14px}
+.s-cta{display:grid; gap:10px}
+.s-cta .t{font-weight:700; font-family:var(--s-display)}
+.s-cta .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; font-weight:700; text-decoration:none; padding:12px 14px; font-size:14px}
+.s-cta .btn svg{width:18px; height:18px}
+.s-report{font-size:13px; text-align:center}
+.s-foot{padding:16px 18px; font-size:11.5px; line-height:1.4}
+.s-sec-t{font-family:var(--s-display); font-weight:700; font-size:15px}
+
+/* ===== A · Clínico Curie ===== */
+.skin-a{--s-bg:#ffffff; --s-ink:#1a2a29; --s-teal:#0b6f68; --s-tint:#eef5f4; --s-line:#dbe6e4;
+  --s-ok:#13795b; --s-ok-bg:#e3f4ec; --s-warn:#9a5b00; --s-warn-bg:#fdf1dc; --s-no:#b3261e; --s-no-bg:#fce8e6;
+  --s-display:"Figtree", system-ui, sans-serif; --s-body:"Figtree", system-ui, sans-serif; --s-mono:"JetBrains Mono", ui-monospace, monospace}
+.skin-a .s-head{background:var(--s-teal); color:#fff}
+.skin-a .s-by{opacity:.85}
+.skin-a .s-h1{font-size:24px; font-weight:800; line-height:1.15; letter-spacing:-.01em}
+.skin-a .lead{color:#4e605e}
+.skin-a .s-search{border:2px solid var(--s-teal); border-radius:14px; box-shadow:0 0 0 4px #0b6f6820}
+.skin-a .s-results li + li{border-top:1px solid var(--s-line)}
+.skin-a .chip{padding:5px 9px; border-radius:999px}
+.skin-a .chip.ok{background:var(--s-ok-bg); color:var(--s-ok)} .skin-a .chip.warn{background:var(--s-warn-bg); color:var(--s-warn)} .skin-a .chip.no{background:var(--s-no-bg); color:var(--s-no)}
+.skin-a .s-quick a{background:var(--s-tint); color:var(--s-teal); padding:8px 12px; border-radius:999px}
+.skin-a .s-aviso{background:var(--s-tint); border-radius:12px; padding:12px 14px; color:#3d504e}
+.skin-a .s-crumb{color:var(--s-teal); font-weight:600}
+.skin-a .seal{border-radius:16px; padding:16px}
+.skin-a .seal.ok{background:var(--s-ok-bg); color:var(--s-ok)}
+.skin-a .seal .ic{width:48px; height:48px; border-radius:50%; background:currentColor; display:grid; place-items:center}
+.skin-a .seal .ic svg{width:28px; height:28px; color:#fff}
+.skin-a .seal .v{font-size:20px}
+.skin-a .seal .sub{color:#2b4a40}
+.skin-a .s-rev{color:#4e605e}
+.skin-a .s-fig{background:var(--s-tint); border-radius:16px; padding:18px 12px 12px}
+.skin-a .s-fig figcaption{color:#5b6d6b}
+.skin-a .s-dl dt,.skin-a .s-dl dd{border-bottom:1px solid var(--s-line)}
+.skin-a .s-crit{border:1px solid var(--s-line); border-radius:14px; padding:14px}
+.skin-a .s-crit .code{color:var(--s-teal)}
+.skin-a .s-others li + li{border-top:1px solid var(--s-line)}
+.skin-a .s-cta{background:var(--s-teal); color:#fff; border-radius:16px; padding:16px}
+.skin-a .s-cta .btn{background:#fff; color:var(--s-teal); border-radius:12px}
+.skin-a .s-report{color:var(--s-teal); text-decoration:underline}
+.skin-a .s-foot{background:#0a3f3b; color:#cfe3e0}
+
+/* ===== B · Timbre farmacéutico ===== */
+.skin-b{--s-bg:#fbfbf9; --s-ink:#18262b; --s-rule:#18262b; --s-soft:#e9ece9; --s-teal:#0b6f68;
+  --s-ok:#1f7a4c; --s-warn:#a15c00; --s-no:#b4232a;
+  --s-display:"Archivo Narrow", "Arial Narrow", sans-serif; --s-body:"Archivo", system-ui, sans-serif; --s-mono:"JetBrains Mono", ui-monospace, monospace}
+.skin-b .s-head{border-bottom:2px solid var(--s-rule)}
+.skin-b .s-brand{font-size:22px; text-transform:uppercase; letter-spacing:.04em}
+.skin-b .s-by{font-family:var(--s-mono); font-size:10px; text-transform:uppercase; letter-spacing:.05em}
+.skin-b .s-h1{font-size:28px; font-weight:700; line-height:1.05; text-transform:uppercase; letter-spacing:.01em}
+.skin-b .lead{font-size:14px}
+.skin-b .s-search{border:2px solid var(--s-rule); font-family:var(--s-mono); font-size:15px; background:#fff}
+.skin-b .s-results{border:2px solid var(--s-rule); background:#fff}
+.skin-b .s-res{padding:12px}
+.skin-b .s-results li + li{border-top:1px dashed #8a9599}
+.skin-b .s-res .d{font-family:var(--s-mono); font-size:11.5px; opacity:.8}
+.skin-b .chip{font-family:var(--s-mono); font-size:11px; text-transform:uppercase; letter-spacing:.04em; padding:3px 6px; border:1.5px solid currentColor}
+.skin-b .chip.ok{color:var(--s-ok)} .skin-b .chip.warn{color:var(--s-warn)} .skin-b .chip.no{color:var(--s-no)}
+.skin-b .s-quick a{font-family:var(--s-mono); font-size:11.5px; text-transform:uppercase; letter-spacing:.04em; border-bottom:2px solid var(--s-rule); padding-bottom:2px}
+.skin-b .s-aviso{border-left:4px solid var(--s-rule); padding:4px 0 4px 12px}
+.skin-b .s-crumb{font-family:var(--s-mono); font-size:11px; text-transform:uppercase; letter-spacing:.06em}
+.skin-b .seal{border:3px double currentColor; padding:12px 14px; transform:rotate(-1.5deg); background:#fff;
+  box-shadow:inset 0 0 0 1px #fff}
+.skin-b .seal.ok{color:var(--s-ok)}
+.skin-b .seal .ic svg{width:40px; height:40px}
+.skin-b .seal .v{font-size:23px; text-transform:uppercase; letter-spacing:.02em}
+.skin-b .seal .sub{font-family:var(--s-mono); font-size:11px; text-transform:uppercase; letter-spacing:.04em}
+.skin-b .s-rev{font-family:var(--s-mono); font-size:10.5px; text-transform:uppercase; letter-spacing:.04em}
+.skin-b .s-fig{border:2px solid var(--s-rule); background:#fff; padding:14px 10px 10px;
+  background-image:linear-gradient(#e7ebe8 1px, transparent 1px), linear-gradient(90deg, #e7ebe8 1px, transparent 1px); background-size:16px 16px}
+.skin-b .s-fig figcaption{font-family:var(--s-mono); font-size:10px; text-transform:uppercase; letter-spacing:.05em; background:#fff; padding:0 4px}
+.skin-b .s-dl{border:2px solid var(--s-rule); background:#fff}
+.skin-b .s-dl dt,.skin-b .s-dl dd{padding:8px 10px; border-bottom:1px solid var(--s-rule)}
+.skin-b .s-dl dt{font-family:var(--s-mono); font-size:11px; text-transform:uppercase; letter-spacing:.04em; opacity:1; border-right:1px solid var(--s-rule)}
+.skin-b .s-dl dd{text-align:left}
+.skin-b .s-dl dt:nth-last-of-type(1), .skin-b .s-dl dd:last-of-type{border-bottom:0}
+.skin-b .s-crit{padding-top:12px; border-top:2px solid var(--s-rule)}
+.skin-b .s-crit .code{background:var(--s-ink); color:#fff; justify-self:start; padding:2px 6px}
+.skin-b .s-sec-t{text-transform:uppercase; letter-spacing:.04em; font-size:16px}
+.skin-b .s-others{border-top:2px solid var(--s-rule)}
+.skin-b .s-others li{border-bottom:1px dashed #8a9599}
+.skin-b .s-cta{border:2px solid var(--s-rule); padding:14px; background:#fff}
+.skin-b .s-cta .t{text-transform:uppercase; font-size:18px; line-height:1.1}
+.skin-b .s-cta .btn{background:var(--s-ink); color:#fff}
+.skin-b .s-report{font-family:var(--s-mono); font-size:11px; text-transform:uppercase; letter-spacing:.05em; text-decoration:underline}
+.skin-b .s-foot{border-top:2px solid var(--s-rule); font-family:var(--s-mono); font-size:10px; text-transform:uppercase; letter-spacing:.04em}
+
+/* ===== C · Blíster ===== */
+.skin-c{--s-bg:#f3f7f6; --s-ink:#14302d; --s-teal:#0b6f68; --s-card:#ffffff; --s-pocket:#e2ecea;
+  --s-ok:#157a55; --s-warn:#b86a00; --s-no:#c42c2c;
+  --s-display:"Bricolage Grotesque", system-ui, sans-serif; --s-body:"Atkinson Hyperlegible", system-ui, sans-serif; --s-mono:"Atkinson Hyperlegible", system-ui, sans-serif;
+  font-size:16.5px}
+.skin-c .s-head{background:var(--s-bg)}
+.skin-c .s-brand{font-size:24px; font-weight:800; color:var(--s-teal); letter-spacing:-.02em}
+.skin-c .s-by{color:#4a6461}
+.skin-c .s-body{padding-top:6px}
+.skin-c .s-h1{font-size:30px; font-weight:800; line-height:1.02; letter-spacing:-.025em}
+.skin-c .lead{font-size:16px}
+.skin-c .s-search{background:var(--s-card); border-radius:22px; padding:15px 16px; font-size:17px; box-shadow:0 2px 0 #c9d9d6}
+.skin-c .s-results{gap:10px}
+.skin-c .s-res{background:var(--s-card); border-radius:22px; padding:12px 14px; grid-template-columns:64px minmax(0,1fr)}
+.skin-c .s-res .ill{background:var(--s-pocket); border-radius:16px; padding:8px 6px; box-shadow:inset 0 2px 4px #0b6f6826}
+.skin-c .chip{padding:6px 10px; border-radius:10px; color:#fff; font-size:13px}
+.skin-c .chip.ok{background:var(--s-ok)} .skin-c .chip.warn{background:var(--s-warn)} .skin-c .chip.no{background:var(--s-no)}
+.skin-c .s-quick a{background:var(--s-card); border-radius:14px; padding:10px 14px; font-size:14px; box-shadow:0 2px 0 #c9d9d6}
+.skin-c .s-aviso{font-size:14px; color:#3f5956}
+.skin-c .s-crumb{font-weight:700; color:var(--s-teal)}
+.skin-c .seal{border-radius:26px; padding:18px; color:#fff}
+.skin-c .seal.ok{background:var(--s-ok)}
+.skin-c .seal .ic{width:52px; height:52px; border-radius:16px; background:#ffffff2e; display:grid; place-items:center}
+.skin-c .seal .ic svg{width:32px; height:32px}
+.skin-c .seal .v{font-size:24px}
+.skin-c .seal .sub{font-size:15px; opacity:.92}
+.skin-c .s-rev{font-size:13.5px; color:#3f5956}
+.skin-c .s-fig{background:var(--s-card); border-radius:26px; padding:16px}
+.skin-c .s-fig .pocket{background:var(--s-pocket); border-radius:999px; padding:14px 18px; box-shadow:inset 0 3px 8px #0b6f6830; width:100%; display:grid; place-items:center}
+.skin-c .s-fig figcaption{font-size:13px; color:#4a6461}
+.skin-c .s-dl{background:var(--s-card); border-radius:22px; padding:6px 16px}
+.skin-c .s-dl dt,.skin-c .s-dl dd{padding:11px 0; font-size:15px}
+.skin-c .s-dl dt:not(:last-of-type), .skin-c .s-dl dd:not(:last-of-type){border-bottom:1px solid #e3ecea}
+.skin-c .s-crit{background:var(--s-card); border-radius:22px; padding:16px}
+.skin-c .s-crit .code{color:var(--s-teal); font-weight:700; font-size:13px}
+.skin-c .s-crit .t{font-family:var(--s-display); font-size:18px}
+.skin-c .s-crit p{font-size:15px}
+.skin-c .s-sec-t{font-size:19px; font-weight:800}
+.skin-c .s-others{gap:8px}
+.skin-c .s-others li{background:var(--s-card); border-radius:16px; padding:12px 14px; font-size:15px}
+.skin-c .s-cta{background:var(--s-ink); color:#fff; border-radius:26px; padding:18px}
+.skin-c .s-cta .t{font-size:20px; line-height:1.15}
+.skin-c .s-cta .btn{background:#7fe0c4; color:var(--s-ink); border-radius:16px; font-size:16px; padding:14px}
+.skin-c .s-report{color:var(--s-teal); font-weight:700}
+.skin-c .s-foot{background:var(--s-pocket); color:#3f5956; font-size:12.5px}
+
+@media (prefers-reduced-motion: no-preference){ .opt{animation:fade .25s ease} @keyframes fade{from{opacity:.4}to{opacity:1}} }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <span class="eyebrow">Píldoras · Un proyecto de Farmacias Curie</span>
+    <h1>Tres direcciones de diseño para elegir</h1>
+    <p>Cada opción muestra las mismas dos pantallas con datos de ejemplo: el buscador de inicio y la ficha de un medicamento. Los nombres, fechas y veredictos son ficticios y solo sirven para ver la apariencia.</p>
+  </header>
+  <div class="tabs" role="tablist" aria-label="Direcciones de diseño">
+    <button class="tab" role="tab" id="tab-a" data-opt="a" aria-selected="true"><span class="k">A</span>Clínico Curie</button>
+    <button class="tab" role="tab" id="tab-b" data-opt="b" aria-selected="false"><span class="k">B</span>Timbre farmacéutico</button>
+    <button class="tab" role="tab" id="tab-c" data-opt="c" aria-selected="false"><span class="k">C</span>Blíster</button>
+  </div>
+  <main id="stage"></main>
+</div>
+
+<script>
+// ---------- Dibujo SVG del comprimido (forma + ranura), en tres estilos ----------
+const SHAPES = {
+  redonda: { el: 'circle', a: 'cx="100" cy="60" r="46"', top: 14, bot: 106, left: 54, right: 146 },
+  oblonga: { el: 'rect',   a: 'x="24" y="30" width="152" height="60" rx="30"', top: 30, bot: 90, left: 24, right: 176 },
+  ovalada: { el: 'ellipse',a: 'cx="100" cy="60" rx="72" ry="40"', top: 20, bot: 100, left: 28, right: 172 },
+};
+function pill(forma, ranura, estilo, color) {
+  const s = SHAPES[forma];
+  const shape = (extra) => `<${s.el} ${s.a} ${extra}/>`;
+  let body = '', groove = '';
+  const vLine = (stroke, w, dash='') => `<line x1="100" y1="${s.top+4}" x2="100" y2="${s.bot-4}" stroke="${stroke}" stroke-width="${w}" stroke-linecap="round" ${dash}/>`;
+  const hLine = (stroke, w) => `<line x1="${s.left+6}" y1="60" x2="${s.right-6}" y2="60" stroke="${stroke}" stroke-width="${w}" stroke-linecap="round"/>`;
+  if (estilo === 'flat') {
+    body = `<g transform="translate(0 5)" opacity=".18">${shape('fill="#0b6f68"')}</g>${shape(`fill="${color||'#ffffff'}" stroke="#9fbcb8" stroke-width="2"`)}`
+         + `<ellipse cx="80" cy="44" rx="26" ry="8" fill="#ffffff" opacity=".7"/>`;
+    if (ranura !== 'sin_ranura') groove = vLine('#0b6f68', 3.5);
+    if (ranura === 'doble_cruz') groove += hLine('#0b6f68', 3.5);
+  } else if (estilo === 'line') {
+    body = shape('fill="#ffffff" stroke="#18262b" stroke-width="2.2"');
+    if (ranura !== 'sin_ranura') groove = `<line x1="97" y1="${s.top}" x2="97" y2="${s.bot}" stroke="#18262b" stroke-width="1.4"/><line x1="103" y1="${s.top}" x2="103" y2="${s.bot}" stroke="#18262b" stroke-width="1.4"/>`;
+    if (ranura === 'doble_cruz') groove += hLine('#18262b', 1.4);
+  } else {
+    body = `<g transform="translate(0 7)">${shape('fill="#b9cfcb"')}</g>${shape(`fill="${color||'#ffffff'}" stroke="#14302d" stroke-width="4"`)}`;
+    if (ranura !== 'sin_ranura') groove = vLine('#14302d', 5);
+    if (ranura === 'doble_cruz') groove += hLine('#14302d', 5);
+  }
+  return `<svg viewBox="0 0 200 120" role="img" aria-label="Comprimido ${forma}, ${ranura==='sin_ranura'?'sin ranura':'con ranura'}">${body}${groove}</svg>`;
+}
+// Dibujo grande con anotación técnica (solo estilo B)
+function pillAnnotated() {
+  return `<svg viewBox="0 0 240 150" role="img" aria-label="Comprimido oblongo con ranura simple">
+    <rect x="30" y="40" width="152" height="60" rx="30" fill="#ffffff" stroke="#18262b" stroke-width="2.2"/>
+    <line x1="103" y1="40" x2="103" y2="100" stroke="#18262b" stroke-width="1.4"/><line x1="109" y1="40" x2="109" y2="100" stroke="#18262b" stroke-width="1.4"/>
+    <path d="M106 40 L150 16 L214 16" fill="none" stroke="#b4232a" stroke-width="1.3"/><circle cx="106" cy="40" r="3" fill="#b4232a"/>
+    <text x="214" y="12" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="10" fill="#b4232a">RANURA SIMPLE</text>
+    <path d="M30 118 L30 126 M182 118 L182 126 M30 122 L182 122" stroke="#18262b" stroke-width="1"/>
+    <text x="106" y="140" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#18262b">FORMA OBLONGA</text>
+  </svg>`;
+}
+
+// ---------- Íconos ----------
+const IC = {
+  ok:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`,
+  warn: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M12 5v9"/><circle cx="12" cy="19" r="1.4" fill="currentColor" stroke="none"/></svg>`,
+  no:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M6 18L18 6"/></svg>`,
+  search:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>`,
+  chat: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><path d="M4 19l1.4-4A7.5 7.5 0 1 1 9 18.6z"/></svg>`,
+  shield:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true" width="14" height="14"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>`,
+};
+const VER = {
+  partible:    { cls: 'ok',   ic: IC.ok,   chip: 'Se puede partir' },
+  condicional: { cls: 'warn', ic: IC.warn, chip: 'Con indicación' },
+  no_partible: { cls: 'no',   ic: IC.no,   chip: 'No partir' },
+};
+const logo = (stroke, fill) => `<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="14" rx="7" fill="${fill}" stroke="${stroke}" stroke-width="2.2"/><line x1="16" y1="9" x2="16" y2="23" stroke="${stroke}" stroke-width="2.2"/></svg>`;
+
+// ---------- Datos de ejemplo ----------
+const RESULTADOS = [
+  { n: 'Losartán 50 mg', d: 'Losartán potásico 50 mg · comprimido recubierto', f: 'oblonga', r: 'simple', v: 'partible' },
+  { n: 'Levotiroxina 100 mcg', d: 'Levotiroxina sódica 100 mcg · comprimido', f: 'redonda', r: 'simple', v: 'condicional' },
+  { n: 'Nifedipino 30 mg LP', d: 'Nifedipino 30 mg · liberación prolongada', f: 'redonda', r: 'sin_ranura', v: 'no_partible', c: '#f3d9a8' },
+];
+const OTRAS = [
+  { n: 'Losartán 100 mg', v: 'partible' },
+  { n: 'Losartán 25 mg', v: 'condicional' },
+  { n: 'Losartán / Hidroclorotiazida 50/12,5 mg', v: 'condicional' },
+];
+
+const chip = (v) => `<span class="chip ${VER[v].cls}">${VER[v].ic}${VER[v].chip}</span>`;
+
+function inicio(estilo, skin) {
+  const st = { a: 'flat', b: 'line', c: 'chunky' }[skin];
+  return `
+  <div class="s-body">
+    <div style="display:grid;gap:8px">
+      <h2 class="s-h1">¿Se puede partir su comprimido?</h2>
+      <p class="lead">Busque por nombre comercial o por principio activo.</p>
+    </div>
+    <div class="s-search">${IC.search}<span class="q">lo<span class="caret"></span></span></div>
+    <ul class="s-results">
+      ${RESULTADOS.map(r => `<li class="s-res"><span class="ill">${pill(r.f, r.r, st, r.c)}</span>
+        <span><span class="n" style="display:block">${r.n}</span><span class="d" style="display:block">${r.d}</span>${chip(r.v)}</span></li>`).join('')}
+    </ul>
+    <div style="display:grid;gap:8px"><span class="s-sec-t">Listas rápidas</span>
+      <div class="s-quick"><a href="#">Se pueden partir</a><a href="#">No se deben partir</a><a href="#">Liberación prolongada</a></div></div>
+    <p class="s-aviso">Información de apoyo para pacientes. No reemplaza la indicación de su médico ni de su químico farmacéutico.</p>
+  </div>`;
+}
+
+function ficha(skin) {
+  const st = { a: 'flat', b: 'line', c: 'chunky' }[skin];
+  const fig = skin === 'b' ? pillAnnotated() : pill('oblonga', 'simple', st);
+  const figInner = skin === 'c' ? `<div class="pocket">${fig}</div>` : fig;
+  return `
+  <div class="s-body">
+    <span class="s-crumb">Losartán › Presentaciones</span>
+    <h2 class="s-h1">¿Se puede partir Losartán 50 mg?</h2>
+    <div class="seal ok"><span class="ic">${IC.ok}</span>
+      <span><span class="v" style="display:block">Sí, se puede partir</span><span class="sub">Por la ranura, en dos mitades iguales</span></span></div>
+    <span class="s-rev">${IC.shield} Revisado por Seba, químico farmacéutico · 28 oct 2026</span>
+    <figure class="s-fig">${figInner}<figcaption>Representación ilustrativa, no a escala</figcaption></figure>
+    <dl class="s-dl">
+      <dt>Forma</dt><dd>Oblonga</dd>
+      <dt>Ranura</dt><dd>Simple</dd>
+      <dt>Liberación</dt><dd>Inmediata</dd>
+      <dt>Forma farmacéutica</dt><dd>Comprimido recubierto</dd>
+    </dl>
+    <div class="s-crit">
+      <span class="code">CRITERIO RANURA-LI</span>
+      <span class="t">Ranurado, liberación inmediata</span>
+      <p>Comprimido de liberación inmediata con ranura funcional. Puede partirse por la ranura sin alterar la liberación del fármaco.</p>
+    </div>
+    <p class="s-aviso">Parta el comprimido solo si su médico le indicó media dosis. Use un partidor de comprimidos y tome la otra mitad en la siguiente dosis.</p>
+    <div style="display:grid;gap:8px"><span class="s-sec-t">Otras presentaciones de losartán</span>
+      <ul class="s-others">${OTRAS.map(o => `<li><span>${o.n}</span>${chip(o.v)}</li>`).join('')}</ul></div>
+    <div class="s-cta"><span class="t">¿Dudas con su tratamiento?</span>
+      <span style="font-size:14px">Consulte gratis a un químico farmacéutico de Farmacias Curie.</span>
+      <a class="btn" href="#">${IC.chat}Escribir por WhatsApp</a></div>
+    <a class="s-report" href="#">Reportar un error en esta ficha</a>
+  </div>`;
+}
+
+function sitio(skin, pantalla) {
+  const lg = { a: logo('#ffffff', '#0b6f68'), b: logo('#18262b', '#ffffff'), c: logo('#0b6f68', '#d9f1ea') }[skin];
+  return `<div class="site skin-${skin}">
+    <div class="s-head"><span class="s-brand">${lg}Píldoras</span><span class="s-by">Un proyecto de<br>Farmacias Curie</span></div>
+    ${pantalla === 'inicio' ? inicio(null, skin) : ficha(skin)}
+    <div class="s-foot">Píldoras · Farmacias Curie, Viña del Mar · Aviso legal · Privacidad</div>
+  </div>`;
+}
+
+// ---------- Conceptos ----------
+const OPCIONES = {
+  a: {
+    titulo: 'A · Clínico Curie',
+    idea: 'La continuación natural de la marca Curie: verde azulado institucional, fondos limpios y bloques suaves. Transmite confianza de farmacia y se integra sin esfuerzo con el sitio de Curie.',
+    fuerte: ['El paciente reconoce a Curie de inmediato', 'Sobria y fácil de mantener', 'Sello de veredicto grande con ícono, texto y color'],
+    debil: ['La menos distintiva: se parece a muchos sitios de salud'],
+    colores: [['#0b6f68','Curie'],['#eef5f4','Fondo suave'],['#13795b','Partible'],['#9a5b00','Condicional'],['#b3261e','No partible']],
+    fuentes: [['Figtree','Títulos y texto']],
+  },
+  b: {
+    titulo: 'B · Timbre farmacéutico',
+    idea: 'Inspirada en la etiqueta de dispensación y el timbre de receta. Recuadros con borde, datos en tipografía monoespaciada y el veredicto como un timbre. El dibujo del comprimido parece un plano técnico con anotaciones.',
+    fuerte: ['Muy reconocible y con carácter propio', 'Transmite rigor técnico y respaldo de un profesional', 'El dibujo anotado explica la ranura sin palabras'],
+    debil: ['Más seria: puede sentirse fría para algunos pacientes', 'Las mayúsculas pequeñas cuestan más a personas mayores'],
+    colores: [['#18262b','Tinta'],['#fbfbf9','Papel'],['#1f7a4c','Partible'],['#a15c00','Condicional'],['#b4232a','No partible']],
+    fuentes: [['Archivo Narrow','Títulos'],['Archivo','Texto'],['JetBrains Mono','Datos y etiquetas']],
+  },
+  c: {
+    titulo: 'C · Blíster',
+    idea: 'Inspirada en el blíster: cada comprimido se muestra en su alvéolo, con tarjetas redondeadas y letra grande. Usa Atkinson Hyperlegible, una tipografía diseñada para personas con baja visión.',
+    fuerte: ['La más legible para adultos mayores (texto base más grande)', 'Cercana y amable, sin perder la marca Curie', 'Sello de veredicto en bloque de color sólido, imposible de pasar por alto'],
+    debil: ['Las pantallas son más largas porque todo es más grande', 'Las tarjetas redondeadas requieren cuidado para no verse infantil'],
+    colores: [['#0b6f68','Curie'],['#f3f7f6','Fondo'],['#157a55','Partible'],['#b86a00','Condicional'],['#c42c2c','No partible']],
+    fuentes: [['Bricolage Grotesque','Títulos'],['Atkinson Hyperlegible','Texto']],
+  },
+};
+
+function render(k) {
+  const o = OPCIONES[k];
+  document.getElementById('stage').innerHTML = `
+  <section class="opt" role="tabpanel" aria-labelledby="tab-${k}">
+    <div class="concept">
+      <h2>${o.titulo}</h2>
+      <p>${o.idea}</p>
+      <h3>A favor</h3><ul>${o.fuerte.map(x => `<li>${x}</li>`).join('')}</ul>
+      <h3>En contra</h3><ul>${o.debil.map(x => `<li>${x}</li>`).join('')}</ul>
+      <h3>Paleta</h3><div class="swatches">${o.colores.map(([h,l]) => `<span class="sw"><i style="background:${h}"></i>${l}</span>`).join('')}</div>
+      <h3>Tipografía</h3><div class="fonts">${o.fuentes.map(([f,u]) => `<div><b style="font-family:'${f}'">${f}</b> <span>· ${u}</span></div>`).join('')}</div>
+      <p class="note">En las tres opciones el veredicto se comunica con ícono, texto y color, nunca solo con color. Los datos son de ejemplo.</p>
+    </div>
+    <div class="screens">
+      <div class="screen"><span class="lbl">Inicio · buscador</span><div class="phone">${sitio(k,'inicio')}</div></div>
+      <div class="screen"><span class="lbl">Ficha de medicamento</span><div class="phone">${sitio(k,'ficha')}</div></div>
+    </div>
+  </section>`;
+  document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', String(t.dataset.opt === k)));
+}
+function fromHash() { const m = location.hash.match(/^#opcion-([abc])$/); return m ? m[1] : 'a'; }
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => { location.hash = 'opcion-' + t.dataset.opt; render(t.dataset.opt); }));
+window.addEventListener('hashchange', () => render(fromHash()));
+document.getElementById('stage').addEventListener('click', e => { if (e.target.closest('.site a')) e.preventDefault(); });
+render(fromHash());
+</script>
