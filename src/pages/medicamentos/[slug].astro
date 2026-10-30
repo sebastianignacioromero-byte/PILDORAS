@@ -87,7 +87,10 @@ const asunto = encodeURIComponent(`Error en ficha: ${ficha.nombreComercial} (${f
           <ul class="grilla">
             {o.fichas.slice(0, MAX_OTRAS).map((f) => (
               <li>
-                <a href={url(`/medicamentos/${f.slug}/`)}>{f.nombreComercial}</a>
+                <span class="otra-marca">
+                  <a href={url(`/medicamentos/${f.slug}/`)}>{f.nombreComercial}</a>
+                  {f.laboratorio && <span class="apagado chico">{f.laboratorio}</span>}
+                </span>
                 <EtiquetaVeredicto veredicto={f.veredicto} />
               </li>
             ))}
@@ -116,10 +119,6 @@ const asunto = encodeURIComponent(`Error en ficha: ${ficha.nombreComercial} (${f
     .ficha-izq, .ficha-der, .ficha-abajo { display: grid; gap: 20px; }
     .ficha-abajo { grid-column: 1 / -1; }
   }
-  /* La columna derecha acompaña al desplazarse solo si cabe entera en la pantalla. */
-  @media (min-width: 960px) and (min-height: 860px) {
-    .ficha-der { position: sticky; top: 24px; }
-  }
   .migas { font-weight: 700; color: var(--marca); }
   .encabezado { display: grid; gap: 6px; }
   .caracteristicas { margin: 0; padding: 6px 16px; display: grid; grid-template-columns: auto 1fr; }
@@ -132,6 +131,7 @@ const asunto = encodeURIComponent(`Error en ficha: ${ficha.nombreComercial} (${f
   .codigo { color: var(--marca); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; }
   .nota { background: var(--fondo); border-radius: 12px; padding: 10px 12px; }
   .otras ul { list-style: none; margin: 0; padding: 0; }
+  .otra-marca { display: grid; gap: 2px; }
   .otras li {
     background: var(--tarjeta);
     border-radius: 16px;

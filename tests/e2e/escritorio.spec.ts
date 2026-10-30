@@ -36,3 +36,32 @@ test.describe('distribución según el ancho', () => {
     expect((await caja(page.locator('main'))).width).toBeGreaterThan(1000);
   });
 });
+
+test.describe('columna derecha de la ficha', () => {
+  test('al desplazarse no tapa "Otras marcas"', async ({ page }, info) => {
+    test.skip(info.project.name !== 'escritorio');
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('medicamentos/losarvit-50-1/');
+    const otras = page.getByRole('heading', { name: /Otras marcas/ });
+    const seccion = page.locator('.otras').first();
+    await seccion.evaluate((e) => window.scrollTo(0, e.getBoundingClientRect().top + window.scrollY - 80));
+    const columna = (await page.locator('.ficha-der').boundingBox())!;
+    const caja = (await seccion.boundingBox())!;
+    const seCruzan = columna.y < caja.y + caja.height && caja.y < columna.y + columna.height;
+    expect(seCruzan).toBe(false);
+  });
+
+  test('cabe sin desplazamiento horizontal en anchos intermedios', async ({ page }, info) => {
+    test.skip(info.project.name !== 'escritorio');
+    for (const ancho of [1000, 1141]) {
+      await page.setViewportSize({ width: ancho, height: 900 });
+      await page.goto('medicamentos/losarvit-50-1/');
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(ancho);
+    }
+  });
+});
+
+test('"Otras marcas" distingue productos con el mismo nombre por laboratorio', async ({ page }) => {
+  await page.goto('medicamentos/losarvit-50-1/');
+  await expect(page.locator('.otras li').first()).toContainText(/Farmasur|Laboratorio/);
+});
