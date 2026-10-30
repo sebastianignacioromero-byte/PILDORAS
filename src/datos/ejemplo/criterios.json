@@ -1,0 +1,74 @@
+[
+  {
+    "codigo": "RANURA-LI",
+    "titulo": "Ranurado, liberación inmediata",
+    "fundamento": "Comprimido de liberación inmediata con ranura funcional. Puede partirse por la ranura sin alterar la liberación del fármaco.",
+    "veredicto": "se_puede_partir"
+  },
+  {
+    "codigo": "SIN-RANURA-LI",
+    "titulo": "Sin ranura, liberación inmediata",
+    "fundamento": "Comprimido de liberación inmediata sin ranura. Puede partirse, pero use un partidor de comprimidos: sin ranura la división puede ser desigual.",
+    "veredicto": "se_puede_partir"
+  },
+  {
+    "codigo": "RECUB-ESTETICO",
+    "titulo": "Recubrimiento solo estético o de sabor",
+    "fundamento": "El recubrimiento no modifica la liberación del fármaco. Puede partirse, aunque el sabor puede ser desagradable.",
+    "veredicto": "se_puede_partir"
+  },
+  {
+    "codigo": "LIB-PROLONGADA",
+    "titulo": "Liberación prolongada",
+    "fundamento": "Partir el comprimido destruye el mecanismo de liberación prolongada y puede liberar toda la dosis de una vez, con riesgo de toxicidad.",
+    "veredicto": "no_debe_partir"
+  },
+  {
+    "codigo": "LIB-OSMOTICA",
+    "titulo": "Liberación osmótica",
+    "fundamento": "El comprimido funciona como una bomba osmótica que libera el fármaco a través de un orificio. Si se parte, deja de funcionar y la dosis se libera de forma descontrolada.",
+    "veredicto": "no_debe_partir"
+  },
+  {
+    "codigo": "ENTERICO",
+    "titulo": "Recubrimiento entérico o gastrorresistente",
+    "fundamento": "El recubrimiento protege el fármaco del ácido del estómago, o al estómago del fármaco. Al partirlo se pierde esa protección.",
+    "veredicto": "no_debe_partir"
+  },
+  {
+    "codigo": "SUBLINGUAL",
+    "titulo": "Comprimido sublingual",
+    "fundamento": "Está diseñado para disolverse bajo la lengua y absorberse por la mucosa de la boca. Partirlo altera la dosis y su absorción.",
+    "veredicto": "no_debe_partir"
+  },
+  {
+    "codigo": "BUCODISPERSABLE",
+    "titulo": "Comprimido bucodispersable",
+    "fundamento": "Está diseñado para deshacerse en la boca. Es frágil y al partirlo se desmorona, por lo que la dosis deja de ser exacta.",
+    "veredicto": "no_debe_partir"
+  },
+  {
+    "codigo": "MTE",
+    "titulo": "Margen terapéutico estrecho",
+    "fundamento": "Pequeñas diferencias en la dosis pueden hacer que el medicamento no funcione o que sea tóxico. No debe partirse salvo indicación expresa y control del profesional.",
+    "veredicto": "no_debe_partir"
+  },
+  {
+    "codigo": "DOSIS-MCG",
+    "titulo": "Dosis muy pequeña (microgramos)",
+    "fundamento": "Contiene una cantidad muy pequeña de fármaco. Partirlo puede repartir el principio activo de forma desigual entre las mitades.",
+    "veredicto": "no_debe_partir"
+  },
+  {
+    "codigo": "PELIGROSO",
+    "titulo": "Fármaco peligroso o citotóxico",
+    "fundamento": "Su manipulación o el polvo que se genera al partirlo exponen a quien lo manipula al fármaco. No debe partirse.",
+    "veredicto": "no_debe_partir"
+  },
+  {
+    "codigo": "NO-SOLIDA",
+    "titulo": "Cápsula u otra forma no partible",
+    "fundamento": "La forma farmacéutica no permite dividirla de manera física ni exacta.",
+    "veredicto": "no_puede_partir"
+  }
+]

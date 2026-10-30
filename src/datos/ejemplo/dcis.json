@@ -1,0 +1,94 @@
+[
+  {
+    "slug": "losartan",
+    "dci": "Losartán",
+    "sinonimos": [
+      "losartan potasico"
+    ],
+    "resumen": "El losartán es un antihipertensivo que se usa una vez al día. La mayoría de sus presentaciones de liberación inmediata se pueden partir si su médico le indicó media dosis, pero la forma del comprimido cambia según el laboratorio: revise la ficha de su marca.",
+    "resumenRevisadoEn": "2026-10-28"
+  },
+  {
+    "slug": "hidroclorotiazida",
+    "dci": "Hidroclorotiazida",
+    "sinonimos": [],
+    "resumen": null,
+    "resumenRevisadoEn": null
+  },
+  {
+    "slug": "metformina",
+    "dci": "Metformina",
+    "sinonimos": [
+      "metformina clorhidrato"
+    ],
+    "resumen": "La metformina se usa en la diabetes tipo 2. Existen presentaciones de liberación inmediata, que suelen poder partirse, y de liberación prolongada (XR, LP), que no se deben partir. Fíjese en el nombre de su marca y en la ficha.",
+    "resumenRevisadoEn": "2026-10-28"
+  },
+  {
+    "slug": "nifedipino",
+    "dci": "Nifedipino",
+    "sinonimos": [],
+    "resumen": null,
+    "resumenRevisadoEn": null
+  },
+  {
+    "slug": "omeprazol",
+    "dci": "Omeprazol",
+    "sinonimos": [],
+    "resumen": null,
+    "resumenRevisadoEn": null
+  },
+  {
+    "slug": "acido-acetilsalicilico",
+    "dci": "Ácido acetilsalicílico",
+    "sinonimos": [
+      "aspirina"
+    ],
+    "resumen": null,
+    "resumenRevisadoEn": null
+  },
+  {
+    "slug": "levotiroxina",
+    "dci": "Levotiroxina",
+    "sinonimos": [
+      "levotiroxina sodica"
+    ],
+    "resumen": null,
+    "resumenRevisadoEn": null
+  },
+  {
+    "slug": "isosorbida-dinitrato",
+    "dci": "Dinitrato de isosorbida",
+    "sinonimos": [],
+    "resumen": null,
+    "resumenRevisadoEn": null
+  },
+  {
+    "slug": "ondansetron",
+    "dci": "Ondansetrón",
+    "sinonimos": [],
+    "resumen": null,
+    "resumenRevisadoEn": null
+  },
+  {
+    "slug": "metotrexato",
+    "dci": "Metotrexato",
+    "sinonimos": [],
+    "resumen": null,
+    "resumenRevisadoEn": null
+  },
+  {
+    "slug": "digoxina",
+    "dci": "Digoxina",
+    "sinonimos": [],
+    "resumen": null,
+    "resumenRevisadoEn": null
+  },
+  {
+    "slug": "atorvastatina",
+    "dci": "Atorvastatina",
+    "sinonimos": [],
+    "resumen": null,
+    "resumenRevisadoEn": null
+  }
+]

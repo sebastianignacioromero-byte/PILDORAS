@@ -1,0 +1,397 @@
+[
+  {
+    "id": 1,
+    "slug": "losarvit-50-1",
+    "nombreComercial": "Losarvit 50",
+    "laboratorio": "Laboratorio Andino",
+    "formaFarmaceutica": "comprimido_recubierto",
+    "liberacion": "inmediata",
+    "recubrimiento": true,
+    "recubrimientoFuncional": false,
+    "formaGeometrica": "oblonga",
+    "ranura": "simple",
+    "ranuraOrientacion": 0,
+    "grabado": null,
+    "veredicto": "se_puede_partir",
+    "criterioCodigo": "RANURA-LI",
+    "notaVeredicto": "Parta por la ranura en dos mitades iguales.",
+    "metaDescripcion": null,
+    "revisadoEn": "2026-10-28",
+    "principios": [
+      {
+        "slug": "losartan",
+        "cantidad": 50,
+        "unidad": "mg"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "slug": "cardioten-50-2",
+    "nombreComercial": "Cardiotén 50",
+    "laboratorio": "Farmasur",
+    "formaFarmaceutica": "comprimido_recubierto",
+    "liberacion": "inmediata",
+    "recubrimiento": true,
+    "recubrimientoFuncional": false,
+    "formaGeometrica": "redonda",
+    "ranura": "sin_ranura",
+    "ranuraOrientacion": 0,
+    "grabado": null,
+    "veredicto": "se_puede_partir",
+    "criterioCodigo": "SIN-RANURA-LI",
+    "notaVeredicto": null,
+    "metaDescripcion": null,
+    "revisadoEn": "2026-10-28",
+    "principios": [
+      {
+        "slug": "losartan",
+        "cantidad": 50,
+        "unidad": "mg"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "slug": "lozarel-100-3",
+    "nombreComercial": "Lozarel 100",
+    "laboratorio": "Laboratorio Pacífico",
+    "formaFarmaceutica": "comprimido",
+    "liberacion": "inmediata",
+    "recubrimiento": false,
+    "recubrimientoFuncional": false,
+    "formaGeometrica": "ovalada",
+    "ranura": "doble_cruz",
+    "ranuraOrientacion": 0,
+    "grabado": null,
+    "veredicto": "se_puede_partir",
+    "criterioCodigo": "RANURA-LI",
+    "notaVeredicto": null,
+    "metaDescripcion": null,
+    "revisadoEn": "2026-10-28",
+    "principios": [
+      {
+        "slug": "losartan",
+        "cantidad": 100,
+        "unidad": "mg"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "slug": "losarvit-d-50-12-5-4",
+    "nombreComercial": "Losarvit D 50/12,5",
+    "laboratorio": "Laboratorio Andino",
+    "formaFarmaceutica": "comprimido_recubierto",
+    "liberacion": "inmediata",
+    "recubrimiento": true,
+    "recubrimientoFuncional": false,
+    "formaGeometrica": "capsular",
+    "ranura": "simple",
+    "ranuraOrientacion": 0,
+    "grabado": null,
+    "veredicto": "se_puede_partir",
+    "criterioCodigo": "RANURA-LI",
+    "notaVeredicto": null,
+    "metaDescripcion": null,
+    "revisadoEn": "2026-10-28",
+    "principios": [
+      {
+        "slug": "losartan",
+        "cantidad": 50,
+        "unidad": "mg"
+      },
+      {
+        "slug": "hidroclorotiazida",
+        "cantidad": 12.5,
+        "unidad": "mg"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "slug": "glucoret-xr-750-5",
+    "nombreComercial": "Glucoret XR 750",
+    "laboratorio": "Farmasur",
+    "formaFarmaceutica": "comprimido",
+    "liberacion": "prolongada",
+    "recubrimiento": false,
+    "recubrimientoFuncional": true,
+    "formaGeometrica": "oblonga",
+    "ranura": "sin_ranura",
+    "ranuraOrientacion": 0,
+    "grabado": null,
+    "veredicto": "no_debe_partir",
+    "criterioCodigo": "LIB-PROLONGADA",
+    "notaVeredicto": "Las siglas XR indican liberación prolongada.",
+    "metaDescripcion": null,
+    "revisadoEn": "2026-10-28",
+    "principios": [
+      {
+        "slug": "metformina",
+        "cantidad": 750,
+        "unidad": "mg"
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "slug": "glucoret-850-6",
+    "nombreComercial": "Glucoret 850",
+    "laboratorio": "Farmasur",
+    "formaFarmaceutica": "comprimido_recubierto",
+    "liberacion": "inmediata",
+    "recubrimiento": true,
+    "recubrimientoFuncional": false,
+    "formaGeometrica": "oblonga",
+    "ranura": "simple",
+    "ranuraOrientacion": 0,
+    "grabado": null,
+    "veredicto": "se_puede_partir",
+    "criterioCodigo": "RANURA-LI",
+    "notaVeredicto": null,
+    "metaDescripcion": null,
+    "revisadoEn": "2026-10-28",
+    "principios": [
+      {
+        "slug": "metformina",
+        "cantidad": 850,
+        "unidad": "mg"
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "slug": "nifelan-oros-30-7",
+    "nombreComercial": "Nifelan OROS 30",
+    "laboratorio": "Laboratorio Pacífico",
+    "formaFarmaceutica": "comprimido_recubierto",
+    "liberacion": "osmotica",
+    "recubrimiento": true,
+    "recubrimientoFuncional": true,
+    "formaGeometrica": "redonda",
+    "ranura": "sin_ranura",
+    "ranuraOrientacion": 0,
+    "grabado": null,
+    "veredicto": "no_debe_partir",
+    "criterioCodigo": "LIB-OSMOTICA",
+    "notaVeredicto": "La cubierta vacía puede aparecer en las deposiciones; es normal.",
+    "metaDescripcion": null,
+    "revisadoEn": "2026-10-28",
+    "principios": [
+      {
+        "slug": "nifedipino",
+        "cantidad": 30,
+        "unidad": "mg"
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "slug": "gastrozol-20-8",
+    "nombreComercial": "Gastrozol 20",
+    "laboratorio": "Laboratorio Andino",
+    "formaFarmaceutica": "capsula_dura",
+    "liberacion": "gastrorresistente",
+    "recubrimiento": false,
+    "recubrimientoFuncional": true,
+    "formaGeometrica": "capsular",
+    "ranura": "sin_ranura",
+    "ranuraOrientacion": 0,
+    "grabado": null,
+    "veredicto": "no_puede_partir",
+    "criterioCodigo": "NO-SOLIDA",
+    "notaVeredicto": null,
+    "metaDescripcion": null,
+    "revisadoEn": "2026-10-28",
+    "principios": [
+      {
+        "slug": "omeprazol",
+        "cantidad": 20,
+        "unidad": "mg"
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "slug": "cardioaspir-100-9",
+    "nombreComercial": "Cardioaspir 100",
+    "laboratorio": "Farmasur",
+    "formaFarmaceutica": "comprimido_recubierto",
+    "liberacion": "gastrorresistente",
+    "recubrimiento": true,
+    "recubrimientoFuncional": true,
+    "formaGeometrica": "redonda",
+    "ranura": "sin_ranura",
+    "ranuraOrientacion": 0,
+    "grabado": null,
+    "veredicto": "no_debe_partir",
+    "criterioCodigo": "ENTERICO",
+    "notaVeredicto": null,
+    "metaDescripcion": null,
+    "revisadoEn": "2026-10-28",
+    "principios": [
+      {
+        "slug": "acido-acetilsalicilico",
+        "cantidad": 100,
+        "unidad": "mg"
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "slug": "levotiral-50-10",
+    "nombreComercial": "Levotiral 50",
+    "laboratorio": "Laboratorio Pacífico",
+    "formaFarmaceutica": "comprimido",
+    "liberacion": "inmediata",
+    "recubrimiento": false,
+    "recubrimientoFuncional": false,
+    "formaGeometrica": "hexagonal",
+    "ranura": "multiple",
+    "ranuraOrientacion": 90,
+    "grabado": null,
+    "veredicto": "no_debe_partir",
+    "criterioCodigo": "DOSIS-MCG",
+    "notaVeredicto": null,
+    "metaDescripcion": null,
+    "revisadoEn": "2026-10-28",
+    "principios": [
+      {
+        "slug": "levotiroxina",
+        "cantidad": 50,
+        "unidad": "mcg"
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "slug": "nitrosub-5-11",
+    "nombreComercial": "Nitrosub 5",
+    "laboratorio": "Laboratorio Andino",
+    "formaFarmaceutica": "comprimido_sublingual",
+    "liberacion": "sublingual",
+    "recubrimiento": false,
+    "recubrimientoFuncional": false,
+    "formaGeometrica": "redonda",
+    "ranura": "sin_ranura",
+    "ranuraOrientacion": 0,
+    "grabado": null,
+    "veredicto": "no_debe_partir",
+    "criterioCodigo": "SUBLINGUAL",
+    "notaVeredicto": null,
+    "metaDescripcion": null,
+    "revisadoEn": "2026-10-28",
+    "principios": [
+      {
+        "slug": "isosorbida-dinitrato",
+        "cantidad": 5,
+        "unidad": "mg"
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "slug": "ondadis-8-12",
+    "nombreComercial": "Ondadis 8",
+    "laboratorio": "Farmasur",
+    "formaFarmaceutica": "comprimido_bucodispersable",
+    "liberacion": "bucodispersable",
+    "recubrimiento": false,
+    "recubrimientoFuncional": false,
+    "formaGeometrica": "cuadrada",
+    "ranura": "sin_ranura",
+    "ranuraOrientacion": 0,
+    "grabado": null,
+    "veredicto": "no_debe_partir",
+    "criterioCodigo": "BUCODISPERSABLE",
+    "notaVeredicto": null,
+    "metaDescripcion": null,
+    "revisadoEn": "2026-10-28",
+    "principios": [
+      {
+        "slug": "ondansetron",
+        "cantidad": 8,
+        "unidad": "mg"
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "slug": "metrexal-2-5-13",
+    "nombreComercial": "Metrexal 2,5",
+    "laboratorio": "Laboratorio Pacífico",
+    "formaFarmaceutica": "comprimido",
+    "liberacion": "inmediata",
+    "recubrimiento": false,
+    "recubrimientoFuncional": false,
+    "formaGeometrica": "triangular",
+    "ranura": "solo_decorativa",
+    "ranuraOrientacion": 0,
+    "grabado": null,
+    "veredicto": "no_debe_partir",
+    "criterioCodigo": "PELIGROSO",
+    "notaVeredicto": "Si su dosis no coincide con un comprimido entero, consulte a su químico farmacéutico.",
+    "metaDescripcion": null,
+    "revisadoEn": "2026-10-28",
+    "principios": [
+      {
+        "slug": "metotrexato",
+        "cantidad": 2.5,
+        "unidad": "mg"
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "slug": "digoxal-0-25-14",
+    "nombreComercial": "Digoxal 0,25",
+    "laboratorio": "Laboratorio Andino",
+    "formaFarmaceutica": "comprimido",
+    "liberacion": "inmediata",
+    "recubrimiento": false,
+    "recubrimientoFuncional": false,
+    "formaGeometrica": "redonda",
+    "ranura": "simple",
+    "ranuraOrientacion": 0,
+    "grabado": null,
+    "veredicto": "no_debe_partir",
+    "criterioCodigo": "MTE",
+    "notaVeredicto": null,
+    "metaDescripcion": null,
+    "revisadoEn": "2026-10-28",
+    "principios": [
+      {
+        "slug": "digoxina",
+        "cantidad": 0.25,
+        "unidad": "mg"
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "slug": "atorlip-20-15",
+    "nombreComercial": "Atorlip 20",
+    "laboratorio": "Farmasur",
+    "formaFarmaceutica": "comprimido_recubierto",
+    "liberacion": "inmediata",
+    "recubrimiento": true,
+    "recubrimientoFuncional": false,
+    "formaGeometrica": "romboidal",
+    "ranura": "sin_ranura",
+    "ranuraOrientacion": 0,
+    "grabado": null,
+    "veredicto": "se_puede_partir",
+    "criterioCodigo": "RECUB-ESTETICO",
+    "notaVeredicto": null,
+    "metaDescripcion": null,
+    "revisadoEn": "2026-10-28",
+    "principios": [
+      {
+        "slug": "atorvastatina",
+        "cantidad": 20,
+        "unidad": "mg"
+      }
+    ]
+  }
+]
