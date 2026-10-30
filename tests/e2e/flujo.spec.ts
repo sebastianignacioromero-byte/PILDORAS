@@ -56,3 +56,16 @@ test('el bloque de contacto lleva a la web de Curie, sin WhatsApp', async ({ pag
   await page.goto('contacto/');
   await expect(page.getByRole('link', { name: 'Visitar Farmacias Curie' })).toHaveAttribute('href', 'https://farmaciascurie.cl');
 });
+
+test('muestra el logo y declara íconos y miniatura para compartir', async ({ page, request, baseURL }) => {
+  await page.goto('./');
+  const logo = page.locator('header img[src$="logo.svg"]');
+  await expect(logo).toBeVisible();
+  const og = await page.locator('meta[property="og:image"]').getAttribute('content');
+  expect(og).toMatch(/^https:\/\/.+\/og\.png$/);
+  for (const sel of ['link[rel="icon"]', 'link[rel="apple-touch-icon"]']) {
+    const href = await page.locator(sel).getAttribute('href');
+    expect((await request.get(new URL(href!, baseURL).href)).status()).toBe(200);
+  }
+  expect((await request.get(new URL('og.png', baseURL).href)).status()).toBe(200);
+});

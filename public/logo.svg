@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Píldoras">
+  <g fill="none" stroke="#d9773a" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M60.5 24.5 A33 33 0 1 1 39.5 24.5"/>
+    <path d="M39.5 24.5 Q46 22 50 15"/>
+    <path d="M60.5 24.5 Q55 23.5 52.5 19"/>
+    <path d="M50 15 C45 6, 35 3, 27 6 C33 13, 43 16, 50 15 Z"/>
+    <path d="M50 15 C55 6, 65 3, 73 6 C67 13, 57 16, 50 15 Z"/>
+    <path d="M48 13.5 L33 7.5"/>
+    <path d="M52 13.5 L67 7.5"/>
+  </g>
+  <g transform="rotate(-45 50 60) translate(50 60) scale(0.9) translate(-50 -60)">
+    <path d="M50 49 H37 A11 11 0 0 0 37 71 H50 Z" fill="#3e8fb0"/>
+    <path d="M50 49 H63 A11 11 0 0 1 63 71 H50 Z" fill="#d9773a"/>
+    <rect x="26" y="49" width="48" height="22" rx="11" fill="none" stroke="#1d5a74" stroke-width="2.3"/>
+    <path d="M50 49 V71" stroke="#1d5a74" stroke-width="2.3"/>
+    <path d="M35 54 H45 M56 54 H66" stroke="#ffffff" stroke-opacity=".55" stroke-width="2.4" stroke-linecap="round"/>
+  </g>
+</svg>
