@@ -1,0 +1,27 @@
+---
+import type { Veredicto } from '../tipos';
+import { VEREDICTOS } from '../lib/textos';
+import Icono from './Icono.astro';
+
+interface Props {
+  veredicto: Veredicto;
+}
+const t = VEREDICTOS[Astro.props.veredicto];
+---
+<span class="etiqueta" style={`background:${t.color}`}><Icono nombre={t.icono} />{t.etiqueta}</span>
+
+<style>
+  .etiqueta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 700;
+    line-height: 1;
+    padding: 6px 10px;
+    border-radius: 10px;
+    white-space: nowrap;
+  }
+  .etiqueta :global(svg) { width: 14px; height: 14px; flex: none; }
+</style>

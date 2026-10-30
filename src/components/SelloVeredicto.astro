@@ -1,0 +1,66 @@
+---
+import type { Veredicto } from '../tipos';
+import { VEREDICTOS, fecha } from '../lib/textos';
+import { QF_NOMBRE, QF_TITULO } from '../config';
+import Icono from './Icono.astro';
+
+interface Props {
+  veredicto: Veredicto;
+  revisadoEn: string;
+}
+const { veredicto, revisadoEn } = Astro.props;
+const t = VEREDICTOS[veredicto];
+---
+<div class="sello-envoltura">
+  <div class="sello" style={`background:${t.color}`}>
+    <span class="icono"><Icono nombre={t.icono} /></span>
+    <span>
+      <strong class="titulo">{t.sello}</strong>
+      <span class="subtitulo">{t.subtitulo}</span>
+    </span>
+  </div>
+  <p class="revision">
+    <Icono nombre="escudo" class="escudo" />
+    Revisado por {QF_NOMBRE}, {QF_TITULO} · <time datetime={revisadoEn}>{fecha(revisadoEn)}</time>
+  </p>
+</div>
+
+<style>
+  .sello-envoltura { display: grid; gap: 8px; }
+  .sello {
+    color: #fff;
+    border-radius: 26px;
+    padding: 18px;
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr);
+    gap: 14px;
+    align-items: center;
+  }
+  .icono {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    background: #ffffff2e;
+    display: grid;
+    place-items: center;
+  }
+  .icono :global(svg) { width: 32px; height: 32px; }
+  .titulo {
+    display: block;
+    font-family: var(--titulos);
+    font-weight: 800;
+    font-size: 1.5rem;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  .subtitulo { display: block; font-size: 0.95rem; opacity: 0.94; }
+  .revision {
+    font-size: 0.85rem;
+    color: var(--apagado);
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .revision :global(.escudo) { width: 16px; height: 16px; flex: none; }
+</style>

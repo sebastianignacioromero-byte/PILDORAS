@@ -1,0 +1,17 @@
+---
+import { url } from '../lib/url';
+---
+<aside class="aviso">
+  <strong>Información de apoyo.</strong> Esta página no reemplaza la indicación de su médico o químico farmacéutico.
+  No parta ni cambie la dosis de un medicamento sin indicación profesional.
+  <a href={url('/aviso-legal/')}>Aviso legal</a>
+</aside>
+
+<style>
+  .aviso {
+    font-size: 0.9rem;
+    color: var(--apagado);
+    border-left: 4px solid var(--marca);
+    padding: 4px 0 4px 12px;
+  }
+</style>

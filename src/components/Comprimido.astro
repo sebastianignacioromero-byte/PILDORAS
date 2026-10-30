@@ -1,0 +1,71 @@
+---
+import type { Ficha } from '../tipos';
+import { esCapsula, svgComprimido } from '../lib/comprimido';
+
+interface Props {
+  ficha: Pick<Ficha, 'formaGeometrica' | 'ranura' | 'ranuraOrientacion' | 'formaFarmaceutica'>;
+  tamano?: 'grande' | 'chico';
+}
+const { ficha, tamano = 'grande' } = Astro.props;
+const svg = svgComprimido({
+  forma: ficha.formaGeometrica,
+  ranura: ficha.ranura,
+  orientacion: ficha.ranuraOrientacion,
+  formaFarmaceutica: ficha.formaFarmaceutica,
+});
+const decorativa = ficha.ranura === 'solo_decorativa' && !esCapsula(ficha.formaFarmaceutica);
+---
+{
+  tamano === 'grande' ? (
+    <figure class="figura">
+      <div class="alveolo" set:html={svg} />
+      <figcaption>
+        Imagen ilustrativa, no a escala
+        {decorativa && <span class="decorativa">Ranura decorativa: no indica que se pueda partir</span>}
+      </figcaption>
+    </figure>
+  ) : (
+    <div class="alveolo chico" set:html={svg} />
+  )
+}
+
+<style>
+  .figura {
+    margin: 0;
+    background: var(--tarjeta);
+    border-radius: 26px;
+    padding: 16px;
+    display: grid;
+    gap: 10px;
+    box-shadow: var(--sombra-tarjeta);
+  }
+  .alveolo {
+    background: var(--alveolo);
+    border-radius: 999px;
+    padding: 14px 18px;
+    box-shadow: inset 0 3px 8px #0b6f6830;
+    display: grid;
+    place-items: center;
+  }
+  .alveolo :global(svg) {
+    width: 100%;
+    max-width: 260px;
+    height: auto;
+  }
+  .alveolo.chico {
+    border-radius: 16px;
+    padding: 8px 6px;
+    box-shadow: inset 0 2px 4px #0b6f6826;
+  }
+  figcaption {
+    font-size: 0.8rem;
+    color: #4a6461;
+    text-align: center;
+    display: grid;
+    gap: 4px;
+  }
+  .decorativa {
+    font-weight: 700;
+    color: var(--tinta);
+  }
+</style>

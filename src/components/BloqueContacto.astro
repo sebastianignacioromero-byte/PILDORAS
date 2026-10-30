@@ -1,0 +1,40 @@
+---
+import { CURIE_NOMBRE, CURIE_URL, WHATSAPP_URL } from '../config';
+import Icono from './Icono.astro';
+---
+<section class="contacto" aria-labelledby="contacto-titulo">
+  <h2 id="contacto-titulo">¿Dudas con su tratamiento?</h2>
+  <p>Consulte a un químico farmacéutico de {CURIE_NOMBRE}.</p>
+  <div class="botones">
+    <a class="boton" href={WHATSAPP_URL} rel="noopener"><Icono nombre="chat" />Escribir por WhatsApp</a>
+    <a class="boton secundario" href={CURIE_URL} rel="noopener">Visitar {CURIE_NOMBRE}</a>
+  </div>
+</section>
+
+<style>
+  .contacto {
+    background: var(--tinta);
+    color: #fff;
+    border-radius: 26px;
+    padding: 20px 18px;
+    display: grid;
+    gap: 10px;
+  }
+  h2 { font-size: 1.3rem; }
+  p { font-size: 0.95rem; }
+  .botones { display: grid; gap: 10px; }
+  .boton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--contacto);
+    color: var(--tinta);
+    border-radius: 16px;
+    padding: 14px;
+    font-size: 1rem;
+    text-decoration: none;
+  }
+  .boton :global(svg) { width: 20px; height: 20px; }
+  .boton.secundario { background: transparent; color: #fff; border: 2px solid #ffffff55; }
+</style>
