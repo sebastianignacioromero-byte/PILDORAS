@@ -12,7 +12,9 @@
     "build": "astro build",
     "preview": "astro preview",
     "test": "vitest run",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "carga:revision": "tsx scripts/carga/revision.ts",
+    "carga:sql": "tsx scripts/carga/generar-sql.ts"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",

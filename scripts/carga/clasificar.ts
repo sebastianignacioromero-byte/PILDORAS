@@ -56,6 +56,7 @@ const EN_NOMBRE: [RegExp, Datos][] = [
   [/\bsl\b|sublingual/, { forma: 'comprimido_sublingual', liberacion: 'sublingual', criterio: 'SUBLINGUAL' }],
   [/\b(odt|bd)\b|bucodispersable/, { forma: 'comprimido_bucodispersable', liberacion: 'bucodispersable', criterio: 'BUCODISPERSABLE' }],
   [/efervescente/, { forma: 'comprimido_efervescente', liberacion: 'efervescente', criterio: 'EFERVESCENTE' }],
+  [/masticable/, { forma: 'comprimido_masticable', liberacion: 'masticable', criterio: 'MASTICABLE' }],
 ];
 
 /** Spec §4.3: orden de evaluación de los criterios que dependen de la forma. */
@@ -78,7 +79,7 @@ export function clasificar(e: EntradaClasificar): Clasificacion {
   const base = porSigla ?? porNombre[0];
   const capsula = base ? esCapsula(base.forma) : false;
   const candidatos = new Set([...(porSigla ? [porSigla.criterio] : []), ...porNombre.map((d) => d.criterio)]);
-  const delNombre = ORDEN_FORMA.map((c) => porNombre.find((d) => d.criterio === c)).find(Boolean);
+  const delNombre = [...ORDEN_FORMA, ...ORDEN_FINAL].map((c) => porNombre.find((d) => d.criterio === c)).find(Boolean);
   const datos = !capsula && delNombre ? delNombre : base;
 
   let criterio: string | null = null;
@@ -94,7 +95,8 @@ export function clasificar(e: EntradaClasificar): Clasificacion {
   if (e.concentraciones.length === 0) alertas.push('concentración ilegible');
 
   const forma = datos?.forma ?? 'otra';
-  const borrador = !criterio || BAJA_CONFIANZA.has(criterio) || e.dcis.length === 0 || e.concentraciones.length === 0;
+  // Sin concentración la ficha se publica igual: el veredicto depende de la forma, no de la dosis.
+  const borrador = !criterio || BAJA_CONFIANZA.has(criterio) || e.dcis.length === 0;
   return {
     criterio,
     formaFarmaceutica: forma,
