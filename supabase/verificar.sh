@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Verifica que el esquema y la migración se ejecutan en un Postgres 16 local.
 # Simula lo mínimo de Supabase (esquemas auth y extensions, roles anon y authenticated).
-# Uso: supabase/verificar.sh   (requiere binarios de PostgreSQL 16)
+# Uso: supabase/verificar.sh [carga.sql]   (requiere binarios de PostgreSQL 16)
+# Con carga.sql, además la ejecuta dos veces como el revisor qf@ejemplo.cl y cuenta las fichas.
 set -euo pipefail
 DIR="$(cd "$(dirname "$0")" && pwd)"
 PGBIN="${PGBIN:-/usr/lib/postgresql/16/bin}"
@@ -43,3 +44,16 @@ $PSQL -t -A <<'SQL'
 select 'criterios_v2=' || count(*) || ' sin_textos=' || count(*) filter (where explicacion = '' or que_hacer = '' or como_reconocer = '') from criterios_particion;
 select 'ficha_v2=' || slug || '|' || (criterio_explicacion <> '') || '|' || (criterio_que_hacer <> '') from v_fichas_publicas;
 SQL
+
+# Carga masiva opcional: se ejecuta dos veces para comprobar que no duplica.
+if [ -n "${1:-}" ]; then
+  $PSQL -f "$DIR/migracion_carga.sql"
+  $PSQL -c "insert into auth.users values ('00000000-0000-0000-0000-0000000000aa')" >/dev/null
+  $PSQL -c "alter table auth.users add column if not exists email text" >/dev/null
+  $PSQL -c "update auth.users set email = 'qf@ejemplo.cl' where id = '00000000-0000-0000-0000-0000000000aa'" >/dev/null
+  $PSQL -f "$1"
+  $PSQL -t -A -c "select 'carga1=' || count(*) || ' publicadas=' || count(*) filter (where estado = 'publicado') from medicamentos"
+  $PSQL -f "$1"
+  $PSQL -t -A -c "select 'carga2=' || count(*) || ' principios=' || (select count(*) from principios_activos) || ' enlaces=' || (select count(*) from medicamento_principios) from medicamentos"
+  $PSQL -t -A -c "select 'visibles=' || count(*) from v_fichas_publicas"
+fi

@@ -23,7 +23,7 @@ export function crearBuscadorSupabase(url: string, clave: string, fetchPropio?: 
           slug: f.slug,
           nombreComercial: f.nombre_comercial,
           laboratorio: f.laboratorio,
-          principios: (f.principios as Principio[]).map((p) => ({ ...p, cantidad: Number(p.cantidad) })),
+          principios: (f.principios as Principio[]).map((p) => ({ ...p, cantidad: p.cantidad === null ? null : Number(p.cantidad) })),
           formaGeometrica: f.forma_geometrica,
           ranura: f.ranura,
           formaFarmaceutica: f.forma_farmaceutica,

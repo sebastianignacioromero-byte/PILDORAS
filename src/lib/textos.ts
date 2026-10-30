@@ -85,7 +85,7 @@ const numero = new Intl.NumberFormat('es-CL', { maximumFractionDigits: 3 });
 
 /** "Losartán 50 mg + Hidroclorotiazida 12,5 mg" */
 export function concentracion(f: Pick<Ficha, 'principios'>): string {
-  return f.principios.map((p) => `${p.dci} ${numero.format(p.cantidad)} ${p.unidad}`).join(' + ');
+  return f.principios.map((p) => (p.cantidad === null ? p.dci : `${p.dci} ${numero.format(p.cantidad)} ${p.unidad}`)).join(' + ');
 }
 
 const fechaLarga = new Intl.DateTimeFormat('es-CL', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
@@ -97,6 +97,7 @@ export function fecha(iso: string): string {
 
 /** "50 mg" o, en una asociación, "50/12,5 mg" (o "50 mg/12,5 mcg" si cambian las unidades). */
 function fuerza(f: Pick<Ficha, 'principios'>): string {
+  if (f.principios.some((p) => p.cantidad === null)) return '';
   const unidades = new Set(f.principios.map((p) => p.unidad));
   if (unidades.size === 1) return `${f.principios.map((p) => numero.format(p.cantidad)).join('/')} ${f.principios[0].unidad}`;
   return f.principios.map((p) => `${numero.format(p.cantidad)} ${p.unidad}`).join('/');
@@ -107,7 +108,7 @@ const escaparRegex = (t: string) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 /** El nombre ya incluye todas las cantidades (p. ej. "Losarvit 50"). */
 function nombreTraeFuerza(f: Pick<Ficha, 'nombreComercial' | 'principios'>): boolean {
   return f.principios.every((p) =>
-    new RegExp(`(^|[^0-9,])${escaparRegex(numero.format(p.cantidad))}($|[^0-9,])`).test(f.nombreComercial),
+    p.cantidad === null || new RegExp(`(^|[^0-9,])${escaparRegex(numero.format(p.cantidad))}($|[^0-9,])`).test(f.nombreComercial),
   );
 }
 

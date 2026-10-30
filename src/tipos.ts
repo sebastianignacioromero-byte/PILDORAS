@@ -30,7 +30,8 @@ export type TipoRanura = (typeof VALORES_RANURA)[number];
 export interface Principio {
   dci: string;
   slug: string;
-  cantidad: number;
+  /** null cuando el producto no declara la dosis en su nombre. */
+  cantidad: number | null;
   unidad: string;
 }
 

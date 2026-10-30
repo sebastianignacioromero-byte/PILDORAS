@@ -64,7 +64,7 @@ export function crearCargaSupabase(url: string, clave: string, fetchPropio?: typ
           criterioFundamento: f.criterio_fundamento,
           criterioExplicacion: f.criterio_explicacion,
           criterioQueHacer: f.criterio_que_hacer,
-          principios: (f.principios as Principio[]).map((p) => ({ ...p, cantidad: Number(p.cantidad) })),
+          principios: (f.principios as Principio[]).map((p) => ({ ...p, cantidad: p.cantidad === null ? null : Number(p.cantidad) })),
         }),
       ),
       dcis: dcis.map(

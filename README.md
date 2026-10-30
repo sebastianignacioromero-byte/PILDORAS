@@ -63,3 +63,23 @@ GitHub Actions (`.github/workflows/deploy.yml`) prueba, construye y publica en c
 ## Datos editables
 
 Nombre del QF, WhatsApp, web de Curie y correo para reportar errores: `src/config.ts` (los valores marcados `PROVISIONAL` deben confirmarse).
+
+## Carga masiva desde el stock de Curie
+
+Especificación: `docs/superpowers/specs/2026-10-30-carga-stock-design.md`. Los archivos del stock, las planillas y el SQL van en `privado/`, que nunca se sube al repositorio.
+
+1. Generar la planilla de revisión:
+
+   ```bash
+   npm run carga:revision -- privado/stock.xlsx
+   ```
+
+   Crea `privado/revision.xlsx` (una fila por ficha, con criterio asignado y alertas) y `privado/laboratorios.xlsx` (códigos de laboratorio para completar con su nombre).
+2. El QF revisa y corrige ambas planillas en Excel.
+3. Generar el SQL:
+
+   ```bash
+   npm run carga:sql -- privado/revision.xlsx privado/laboratorios.xlsx --revisor <correo del QF en Supabase>
+   ```
+
+4. En el SQL Editor de Supabase: ejecutar una vez `supabase/migracion_carga.sql` y luego `privado/carga.sql`. Se puede repetir con un stock nuevo: actualiza las fichas sin duplicarlas y nunca vuelve a borrador una ficha ya publicada.

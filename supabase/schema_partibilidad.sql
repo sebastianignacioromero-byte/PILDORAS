@@ -194,7 +194,7 @@ create index medicamentos_ean_idx    on public.medicamentos (ean) where ean is n
 create table public.medicamento_principios (
   medicamento_id       bigint not null references public.medicamentos(id) on delete cascade,
   principio_activo_id  bigint not null references public.principios_activos(id),
-  cantidad             numeric(10,3) not null check (cantidad > 0),
+  cantidad             numeric(10,3) check (cantidad > 0),   -- null si el producto no declara la dosis
   unidad               text not null default 'mg',   -- mg, mcg, g, UI, etc.
   primary key (medicamento_id, principio_activo_id)
 );
