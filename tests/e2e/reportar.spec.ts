@@ -34,5 +34,5 @@ test('avisa si el envío falla', async ({ page }) => {
   await abrirFormulario(page);
   await page.getByLabel('¿Qué está mal?').fill('Dato incorrecto en la ficha');
   await page.getByRole('button', { name: 'Enviar reporte' }).click();
-  await expect(page.getByText(/No pudimos enviar su reporte/)).toBeVisible();
+  await expect(page.getByText(/No pudimos enviar su reporte.*error 500/)).toBeVisible();
 });

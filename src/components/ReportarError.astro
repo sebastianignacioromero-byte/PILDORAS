@@ -23,7 +23,7 @@ const supabase = configSupabase();
 </details>
 
 <script>
-  import { enviarReporte, validarReporte } from '../lib/reportes';
+  import { enviarReporte, ErrorReporte, validarReporte } from '../lib/reportes';
 
   document.querySelectorAll<HTMLDetailsElement>('.reportar').forEach((raiz) => {
     const form = raiz.querySelector('form')!;
@@ -49,8 +49,9 @@ const supabase = configSupabase();
         await enviarReporte(reporte, { url, clave });
         form.reset();
         estado.textContent = 'Gracias. Revisaremos la ficha.';
-      } catch {
-        estado.textContent = 'No pudimos enviar su reporte. Intente de nuevo en unos minutos.';
+      } catch (e) {
+        const codigo = e instanceof ErrorReporte ? ` (error ${e.codigo})` : ' (sin conexión)';
+        estado.textContent = `No pudimos enviar su reporte${codigo}. Intente de nuevo en unos minutos.`;
       } finally {
         boton.disabled = false;
       }

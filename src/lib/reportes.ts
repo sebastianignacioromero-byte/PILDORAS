@@ -1,6 +1,12 @@
 // Envío de reportes de error desde la ficha a la tabla "reportes" de Supabase.
 // El público solo puede insertar (RLS); nunca leer reportes ajenos.
 
+export class ErrorReporte extends Error {
+  constructor(readonly codigo: number) {
+    super(`No se pudo enviar el reporte (error ${codigo}).`);
+  }
+}
+
 export interface Reporte {
   medicamentoSlug: string;
   medicamento: string;
@@ -34,5 +40,5 @@ export async function enviarReporte(r: Reporte, supabase: { url: string; clave: 
       contacto: r.contacto.trim() || null,
     }),
   });
-  if (!respuesta.ok) throw new Error(`No se pudo enviar el reporte (${respuesta.status}).`);
+  if (!respuesta.ok) throw new ErrorReporte(respuesta.status);
 }
