@@ -33,6 +33,8 @@ Web informativa para pacientes que responde, por marca comercial, si un comprimi
 
 ### 2.2 Criterios iniciales
 
+> **Actualización (30-10-2026):** los criterios vigentes son 16, con textos aprobados por el QF en el documento "Píldoras · Criterios de partición". Cada uno tiene explicación para el paciente, por qué, qué hacer y cómo reconocerlo. Se agregaron EFERVESCENTE y VAGINAL (no se debe partir) y MASTICABLE y DISPERSABLE (se puede partir). Los textos viven en `src/datos/ejemplo/criterios.json` y `supabase/migracion_criterios.sql`; una prueba verifica que coincidan. La tabla de abajo es la versión inicial.
+
 Los textos de fundamento son **borrador**. Seba los redacta y aprueba antes de publicar fichas reales.
 
 | Código | Título | Veredicto |

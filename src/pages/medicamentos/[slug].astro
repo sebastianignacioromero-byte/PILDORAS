@@ -53,7 +53,9 @@ const asunto = encodeURIComponent(`Error en ficha: ${ficha.nombreComercial} (${f
       <section class="tarjeta criterio o6" aria-labelledby="criterio-titulo">
         <span class="codigo">Criterio {ficha.criterioCodigo}</span>
         <h2 id="criterio-titulo">{ficha.criterioTitulo}</h2>
-        <p>{ficha.criterioFundamento}</p>
+        <p>{ficha.criterioExplicacion}</p>
+        <h3>Qué hacer</h3>
+        <p>{ficha.criterioQueHacer}</p>
         {ficha.notaVeredicto && <p class="nota"><strong>Nota:</strong> {ficha.notaVeredicto}</p>}
         <a href={url(`/criterios/${ficha.criterioCodigo.toLowerCase()}/`)}>Más sobre este criterio</a>
       </section>
@@ -126,6 +128,7 @@ const asunto = encodeURIComponent(`Error en ficha: ${ficha.nombreComercial} (${f
   .caracteristicas dd { font-weight: 700; text-align: right; }
   .caracteristicas dt:last-of-type, .caracteristicas dd:last-of-type { border-bottom: 0; }
   .criterio { display: grid; gap: 8px; }
+  .criterio h3 { margin-top: 6px; font-size: 1rem; }
   .codigo { color: var(--marca); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; }
   .nota { background: var(--fondo); border-radius: 12px; padding: 10px 12px; }
   .otras ul { list-style: none; margin: 0; padding: 0; }

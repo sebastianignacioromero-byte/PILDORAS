@@ -15,12 +15,25 @@ export async function getStaticPaths() {
 const { criterio } = Astro.props as { criterio: Criterio };
 const fichas = await fichasDeCriterio(criterio.codigo);
 ---
-<Base ancho="lectura" titulo={criterio.titulo} descripcion={criterio.fundamento}>
+<Base ancho="lectura" titulo={criterio.titulo} descripcion={criterio.explicacion}>
   <nav aria-label="Ruta"><a href={url('/criterios/')}>Criterios</a></nav>
   <span class="codigo">Criterio {criterio.codigo}</span>
   <h1>{criterio.titulo}</h1>
   <EtiquetaVeredicto veredicto={criterio.veredicto} />
-  <p class="fundamento">{criterio.fundamento}</p>
+  <p class="explicacion">{criterio.explicacion}</p>
+
+  <section class="tarjeta pila" aria-labelledby="por-que">
+    <h2 id="por-que">Por qué</h2>
+    <p>{criterio.fundamento}</p>
+  </section>
+  <section class="tarjeta pila" aria-labelledby="que-hacer">
+    <h2 id="que-hacer">Qué hacer</h2>
+    <p>{criterio.queHacer}</p>
+  </section>
+  <section class="tarjeta pila" aria-labelledby="reconocer">
+    <h2 id="reconocer">Cómo reconocerlo en el envase</h2>
+    <p>{criterio.comoReconocer}</p>
+  </section>
 
   {fichas.length > 0 && (
     <section class="pila" aria-labelledby="fichas-titulo">
@@ -41,7 +54,8 @@ const fichas = await fichasDeCriterio(criterio.codigo);
 
 <style>
   .codigo { color: var(--marca); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; }
-  .fundamento { font-size: 1.05rem; }
+  .explicacion { font-size: 1.15rem; }
+  .tarjeta { gap: 8px; }
   .lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
   .lista li { display: grid; gap: 2px; }
 </style>

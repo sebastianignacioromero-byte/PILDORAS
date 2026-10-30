@@ -3,8 +3,8 @@ import { validarFichas } from '../../src/lib/validar';
 import type { Criterio, Ficha } from '../../src/tipos';
 
 const criterios: Criterio[] = [
-  { codigo: 'RANURA-LI', titulo: 'Ranurado', fundamento: 'x', veredicto: 'se_puede_partir' },
-  { codigo: 'LIB-PROLONGADA', titulo: 'LP', fundamento: 'x', veredicto: 'no_debe_partir' },
+  { codigo: 'RANURA-LI', titulo: 'Ranurado', fundamento: 'x', veredicto: 'se_puede_partir', explicacion: 'x', queHacer: 'x', comoReconocer: 'x' },
+  { codigo: 'LIB-PROLONGADA', titulo: 'LP', fundamento: 'x', veredicto: 'no_debe_partir', explicacion: 'x', queHacer: 'x', comoReconocer: 'x' },
 ];
 
 function ficha(extra: Partial<Ficha> = {}): Ficha {
@@ -13,7 +13,7 @@ function ficha(extra: Partial<Ficha> = {}): Ficha {
     liberacion: 'inmediata', recubrimiento: false, recubrimientoFuncional: false, formaGeometrica: 'oblonga',
     ranura: 'simple', ranuraOrientacion: 0, grabado: null, veredicto: 'se_puede_partir', notaVeredicto: null,
     metaDescripcion: null, revisadoEn: '2026-10-28', criterioCodigo: 'RANURA-LI', criterioTitulo: 'Ranurado',
-    criterioFundamento: 'x', principios: [], ...extra,
+    criterioFundamento: 'x', criterioExplicacion: 'x', criterioQueHacer: 'x', principios: [], ...extra,
   };
 }
 

@@ -138,6 +138,8 @@ select
   c.codigo      as criterio_codigo,
   c.titulo      as criterio_titulo,
   c.fundamento  as criterio_fundamento,
+  c.explicacion as criterio_explicacion,
+  c.que_hacer   as criterio_que_hacer,
   coalesce(
     jsonb_agg(
       jsonb_build_object(

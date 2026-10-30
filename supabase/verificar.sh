@@ -35,3 +35,11 @@ select 'por_veredicto=' || string_agg(veredicto_asociado || ':' || n, ',' order 
 select 'buscar=' || slug || '|' || principios::text || '|' || veredicto from buscar_medicamentos('losartan');
 select 'dci=' || slug || '|' || n_se_puede || '|' || n_no_debe || '|' || n_no_puede from v_dci_publicas;
 SQL
+
+# La migración de criterios debe poder aplicarse sobre una base ya instalada, y repetirse.
+$PSQL -f "$DIR/migracion_criterios.sql"
+$PSQL -f "$DIR/migracion_criterios.sql"
+$PSQL -t -A <<'SQL'
+select 'criterios_v2=' || count(*) || ' sin_textos=' || count(*) filter (where explicacion = '' or que_hacer = '' or como_reconocer = '') from criterios_particion;
+select 'ficha_v2=' || slug || '|' || (criterio_explicacion <> '') || '|' || (criterio_que_hacer <> '') from v_fichas_publicas;
+SQL

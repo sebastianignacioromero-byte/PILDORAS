@@ -4,7 +4,7 @@ import criteriosJson from '../datos/ejemplo/criterios.json';
 import dcisJson from '../datos/ejemplo/dcis.json';
 import fichasJson from '../datos/ejemplo/fichas.json';
 
-type FichaEjemplo = Omit<Ficha, 'criterioTitulo' | 'criterioFundamento' | 'principios'> & {
+type FichaEjemplo = Omit<Ficha, 'criterioTitulo' | 'criterioFundamento' | 'criterioExplicacion' | 'criterioQueHacer' | 'principios'> & {
   principios: { slug: string; cantidad: number; unidad: string }[];
 };
 
@@ -18,6 +18,8 @@ export async function cargarEjemplo(): Promise<DatosCrudos> {
     ...f,
     criterioTitulo: criterio.get(f.criterioCodigo)?.titulo ?? '',
     criterioFundamento: criterio.get(f.criterioCodigo)?.fundamento ?? '',
+    criterioExplicacion: criterio.get(f.criterioCodigo)?.explicacion ?? '',
+    criterioQueHacer: criterio.get(f.criterioCodigo)?.queHacer ?? '',
     principios: f.principios.map((p) => ({ ...p, dci: nombreDci.get(p.slug) ?? p.slug })),
   }));
   return { fichas, dcis, criterios };

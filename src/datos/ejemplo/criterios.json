@@ -2,73 +2,145 @@
   {
     "codigo": "RANURA-LI",
     "titulo": "Ranurado, liberación inmediata",
-    "fundamento": "Comprimido de liberación inmediata con ranura funcional. Puede partirse por la ranura sin alterar la liberación del fármaco.",
-    "veredicto": "se_puede_partir"
+    "veredicto": "se_puede_partir",
+    "explicacion": "Tiene una ranura hecha para dividirlo en partes iguales. Puede partirlo si su médico le indicó media dosis.",
+    "fundamento": "La ranura permite dividir en dosis iguales. Por tanto, su acción no depende de que el comprimido esté entero.",
+    "queHacer": "Parta con un partidor justo antes de tomarlo. Guarde la otra mitad en el envase original y tómela en la dosis siguiente.",
+    "comoReconocer": "Línea/s marcada/s en una o ambas caras."
   },
   {
     "codigo": "SIN-RANURA-LI",
     "titulo": "Sin ranura, liberación inmediata",
-    "fundamento": "Comprimido de liberación inmediata sin ranura. Puede partirse, pero use un partidor de comprimidos: sin ranura la división puede ser desigual.",
-    "veredicto": "se_puede_partir"
+    "veredicto": "se_puede_partir",
+    "explicacion": "No tiene ranura, pero puede partirse. Use un partidor: las mitades pueden quedar desiguales.",
+    "fundamento": "Sin ranura, la división es imprecisa y las mitades pueden variar en la cantidad de mg en cada una.",
+    "queHacer": "Use siempre un partidor, nunca un cuchillo. Si necesita una dosis exacta, consulte si existe una presentación de menor dosis.",
+    "comoReconocer": "Superficie lisa, sin línea."
   },
   {
     "codigo": "RECUB-ESTETICO",
     "titulo": "Recubrimiento solo estético o de sabor",
-    "fundamento": "El recubrimiento no modifica la liberación del fármaco. Puede partirse, aunque el sabor puede ser desagradable.",
-    "veredicto": "se_puede_partir"
+    "veredicto": "se_puede_partir",
+    "explicacion": "Tiene una cubierta que solo protege el sabor o el color. Puede partirlo, aunque la mitad puede saber amarga.",
+    "fundamento": "El recubrimiento tiene fines estéticos y de sabor, no controla la liberación. Al partirlo se expone el núcleo: puede cambiar el sabor y tener un color diferente.",
+    "queHacer": "Tómelo con agua apenas lo parta. Guarde la otra mitad protegida en el envase y úsela en la dosis siguiente.",
+    "comoReconocer": "\"Comprimido recubierto\", sin otra palabra adicional en la descripción."
+  },
+  {
+    "codigo": "MASTICABLE",
+    "titulo": "Comprimido masticable",
+    "veredicto": "se_puede_partir",
+    "explicacion": "Está hecho para masticarse, así que partirlo no cambia su efecto.",
+    "fundamento": "Su liberación no depende de que el comprimido esté entero: se diseñó para romperse en la boca.",
+    "queHacer": "Puede partirlo si le indicaron media dosis. Mastique bien cada parte antes de tragarla.",
+    "comoReconocer": "\"Masticable\" en el nombre o la descripción."
+  },
+  {
+    "codigo": "DISPERSABLE",
+    "titulo": "Comprimido dispersable en agua",
+    "veredicto": "se_puede_partir",
+    "explicacion": "Se deshace en agua antes de tomarlo, así que partirlo no cambia su efecto.",
+    "fundamento": "Está diseñado para desintegrarse en agua. Su liberación no depende de que el comprimido esté entero.",
+    "queHacer": "Puede partirlo si le indicaron media dosis. Disuelva la parte que corresponde en un poco de agua y tómela de inmediato.",
+    "comoReconocer": "\"Dispersable\" en el nombre o la descripción (no confundir con bucodispersable)."
   },
   {
     "codigo": "LIB-PROLONGADA",
     "titulo": "Liberación prolongada",
-    "fundamento": "Partir el comprimido destruye el mecanismo de liberación prolongada y puede liberar toda la dosis de una vez, con riesgo de toxicidad.",
-    "veredicto": "no_debe_partir"
+    "veredicto": "no_debe_partir",
+    "explicacion": "Libera el medicamento prolongadamente durante el día. Si lo parte, puede liberar toda la dosis de una vez.",
+    "fundamento": "Una matriz o cubierta controla la liberación lentamente. Romperla produce una liberación inmediata y elevada, lo que puede producir riesgo de toxicidad.",
+    "queHacer": "Tómelo entero con agua, sin partir, masticar ni triturar. Si no puede tragarlo o necesita otra dosis, consulte: puede existir otra presentación o forma más cómoda para su uso.",
+    "comoReconocer": "LP, SR, XR, XL, Retard, \"liberación prolongada\", \"sostenida\", \"controlada\" o \"modificada\"."
   },
   {
     "codigo": "LIB-OSMOTICA",
     "titulo": "Liberación osmótica",
-    "fundamento": "El comprimido funciona como una bomba osmótica que libera el fármaco a través de un orificio. Si se parte, deja de funcionar y la dosis se libera de forma descontrolada.",
-    "veredicto": "no_debe_partir"
+    "veredicto": "no_debe_partir",
+    "explicacion": "Funciona como una pequeña bomba que libera el medicamento por uno o varios orificios. Si lo parte, deja de funcionar.",
+    "fundamento": "Sistema osmótico: una membrana semipermeable rodea un núcleo que empuja el fármaco por un orificio láser. Si lo parte, libera la dosis sin control.",
+    "queHacer": "Tómelo entero. La cubierta vacía puede aparecer en las deposiciones: es normal.",
+    "comoReconocer": "OR, \"sistema osmótico\" o \"liberación osmótica\"."
   },
   {
     "codigo": "ENTERICO",
     "titulo": "Recubrimiento entérico o gastrorresistente",
-    "fundamento": "El recubrimiento protege el fármaco del ácido del estómago, o al estómago del fármaco. Al partirlo se pierde esa protección.",
-    "veredicto": "no_debe_partir"
+    "veredicto": "no_debe_partir",
+    "explicacion": "Tiene una cubierta que lo protege del ácido del estómago, o que protege su estómago. Partido, le quita esa protección.",
+    "fundamento": "La cubierta se disuelve recién en el intestino, que es donde se absorbe el medicamento. Partirlo expone el fármaco al ácido, que lo inactiva, o expone la mucosa del estómago, dañándola.",
+    "queHacer": "Tómelo entero. Si le cuesta tragar, consulte: existen alternativas.",
+    "comoReconocer": "\"Gastrorresistente\", \"cubierta entérica\", EC o ER."
   },
   {
     "codigo": "SUBLINGUAL",
     "titulo": "Comprimido sublingual",
-    "fundamento": "Está diseñado para disolverse bajo la lengua y absorberse por la mucosa de la boca. Partirlo altera la dosis y su absorción.",
-    "veredicto": "no_debe_partir"
+    "veredicto": "no_debe_partir",
+    "explicacion": "Se disuelve bajo la lengua y pasa directo a la sangre. Úselo entero, como indica el envase.",
+    "fundamento": "Se absorbe por la mucosa de la boca, en forma rápida y sin pasar por el hígado. La dosis está diseñada para disolverse completa; partirlo altera la dosis y la absorción.",
+    "queHacer": "Póngalo bajo la lengua y déjelo disolver. No lo trague ni lo mastique.",
+    "comoReconocer": "\"Sublingual\" o SL."
   },
   {
     "codigo": "BUCODISPERSABLE",
     "titulo": "Comprimido bucodispersable",
-    "fundamento": "Está diseñado para deshacerse en la boca. Es frágil y al partirlo se desmorona, por lo que la dosis deja de ser exacta.",
-    "veredicto": "no_debe_partir"
+    "veredicto": "no_debe_partir",
+    "explicacion": "Se deshace en la boca sin agua. Es frágil: si lo parte se desmorona y la dosis deja de ser exacta.",
+    "fundamento": "Está hecho con baja compresión o liofilizado, por eso es muy frágil y sensible a la humedad. Algunos contienen microgránulos recubiertos que se dañan al partirlo.",
+    "queHacer": "Sáquelo del blíster con las manos secas justo antes de usarlo. Póngalo sobre la lengua y deje que se deshaga.",
+    "comoReconocer": "\"Bucodispersable\", ODT o BD."
   },
   {
     "codigo": "MTE",
     "titulo": "Margen terapéutico estrecho",
-    "fundamento": "Pequeñas diferencias en la dosis pueden hacer que el medicamento no funcione o que sea tóxico. No debe partirse salvo indicación expresa y control del profesional.",
-    "veredicto": "no_debe_partir"
+    "veredicto": "no_debe_partir",
+    "explicacion": "Pequeñas diferencias en la dosis pueden hacer que no funcione o que sea tóxico. No lo parta salvo indicación expresa de su médico.",
+    "fundamento": "La distancia entre la concentración eficaz y la tóxica es pequeña. La diferencia de contenido entre dos mitades es clínicamente relevante en estos fármacos.",
+    "queHacer": "Si necesita otra dosis, pida la presentación con la dosis exacta. Si su médico le indicó partirlo, use partidor y no cambie de marca sin consultar.",
+    "comoReconocer": "No figura en el envase: depende del principio activo."
   },
   {
     "codigo": "DOSIS-MCG",
     "titulo": "Dosis muy pequeña (microgramos)",
-    "fundamento": "Contiene una cantidad muy pequeña de fármaco. Partirlo puede repartir el principio activo de forma desigual entre las mitades.",
-    "veredicto": "no_debe_partir"
+    "veredicto": "no_debe_partir",
+    "explicacion": "Contiene una cantidad muy pequeña de medicamento. Al partirlo, las mitades pueden quedar con dosis distintas.",
+    "fundamento": "El fármaco está diluido en mucho excipiente. Se garantiza la uniformidad de la dosis del comprimido entero, no la de sus partes, por lo que al dividirlo puede haber diferencias de dosis significativas.",
+    "queHacer": "Pida la presentación con la dosis exacta: estos medicamentos suelen tener varias concentraciones.",
+    "comoReconocer": "Dosis expresada en mcg o µg."
   },
   {
     "codigo": "PELIGROSO",
     "titulo": "Fármaco peligroso o citotóxico",
-    "fundamento": "Su manipulación o el polvo que se genera al partirlo exponen a quien lo manipula al fármaco. No debe partirse.",
-    "veredicto": "no_debe_partir"
+    "veredicto": "no_debe_partir",
+    "explicacion": "Puede ser dañino para quien lo manipula. No lo parta ni lo triture.",
+    "fundamento": "Son fármacos citotóxicos, hormonales o teratogénicos. Partirlos genera polvo y contacto con la piel, con riesgo para cuidadores y embarazadas.",
+    "queHacer": "Si debe tocarlo, use guantes. Las embarazadas no deben manipularlo. Si necesita otra dosis, consulte.",
+    "comoReconocer": "El folleto advierte sobre su manipulación. Depende del principio activo."
+  },
+  {
+    "codigo": "EFERVESCENTE",
+    "titulo": "Comprimido efervescente",
+    "veredicto": "no_debe_partir",
+    "explicacion": "Está hecho para disolverse entero en agua. Si lo parte, no sabrá cuánta dosis toma.",
+    "fundamento": "La dosis está calculada para el comprimido completo disuelto. Partirlo da mitades desiguales y lo expone a la humedad, que inicia la reacción.",
+    "queHacer": "Disuélvalo entero en un vaso de agua y tómelo cuando deje de burbujear. Si necesita otra dosis, consulte.",
+    "comoReconocer": "\"Efervescente\" en el nombre o la descripción."
+  },
+  {
+    "codigo": "VAGINAL",
+    "titulo": "Comprimido vaginal",
+    "veredicto": "no_debe_partir",
+    "explicacion": "Está diseñado para aplicarse entero por vía vaginal. No lo parta.",
+    "fundamento": "Su forma y su dosis están pensadas para disolverse completo en el sitio de aplicación. Partido, la dosis y la absorción cambian.",
+    "queHacer": "Úselo entero, con el aplicador si lo trae, como indica el folleto.",
+    "comoReconocer": "\"Comprimido vaginal\" u \"óvulo\" en la descripción."
   },
   {
     "codigo": "NO-SOLIDA",
     "titulo": "Cápsula u otra forma no partible",
-    "fundamento": "La forma farmacéutica no permite dividirla de manera física ni exacta.",
-    "veredicto": "no_puede_partir"
+    "veredicto": "no_puede_partir",
+    "explicacion": "Es una cápsula u otra forma que no se puede dividir en partes iguales.",
+    "fundamento": "Las cápsulas contienen polvo, gránulos o líquido dentro de una cubierta. No hay forma física de fraccionarlas con exactitud.",
+    "queHacer": "Trague la cápsula entera. Antes de abrirla, consulte: algunas se pueden abrir y otras no.",
+    "comoReconocer": "\"Cápsula\", \"cápsula blanda\" o \"perla\"."
   }
 ]

@@ -48,7 +48,7 @@ Nunca use la clave `service_role` en este repositorio: es público.
 ## Base de datos (Supabase)
 
 1. Cree un proyecto en Supabase.
-2. En el SQL Editor ejecute `supabase/schema_partibilidad.sql` y después `supabase/migracion_web_seo.sql`.
+2. En el SQL Editor ejecute, en este orden, `supabase/schema_partibilidad.sql`, `supabase/migracion_web_seo.sql` y `supabase/migracion_criterios.sql`. Si ya había ejecutado los dos primeros, basta con el tercero (se puede repetir sin problemas).
 3. Regístrese en el sitio de Supabase con su correo y conviértase en administrador: `update perfiles set rol = 'admin' where id = '<su uuid>';`
 
 Para probar el SQL en local (requiere PostgreSQL 16): `supabase/verificar.sh`.

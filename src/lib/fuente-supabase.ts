@@ -34,7 +34,7 @@ export function crearCargaSupabase(url: string, clave: string, fetchPropio?: typ
     const [fichas, dcis, criterios] = await Promise.all([
       todas<Record<string, any>>(cliente, 'v_fichas_publicas', '*', 'slug'),
       todas<Record<string, any>>(cliente, 'v_dci_publicas', 'slug,dci,sinonimos,resumen,resumen_revisado_en', 'slug'),
-      todas<Record<string, any>>(cliente, 'criterios_particion', 'codigo,titulo,fundamento,veredicto_asociado', 'codigo', ['activo', true]),
+      todas<Record<string, any>>(cliente, 'criterios_particion', 'codigo,titulo,fundamento,explicacion,que_hacer,como_reconocer,veredicto_asociado', 'codigo', ['activo', true]),
     ]);
     // Nunca publicar un sitio vacío por error (proyecto equivocado, permisos o datos aún sin cargar).
     if (fichas.length === 0) {
@@ -62,6 +62,8 @@ export function crearCargaSupabase(url: string, clave: string, fetchPropio?: typ
           criterioCodigo: f.criterio_codigo,
           criterioTitulo: f.criterio_titulo,
           criterioFundamento: f.criterio_fundamento,
+          criterioExplicacion: f.criterio_explicacion,
+          criterioQueHacer: f.criterio_que_hacer,
           principios: (f.principios as Principio[]).map((p) => ({ ...p, cantidad: Number(p.cantidad) })),
         }),
       ),
@@ -75,7 +77,15 @@ export function crearCargaSupabase(url: string, clave: string, fetchPropio?: typ
         }),
       ),
       criterios: criterios.map(
-        (c): Criterio => ({ codigo: c.codigo, titulo: c.titulo, fundamento: c.fundamento, veredicto: c.veredicto_asociado }),
+        (c): Criterio => ({
+          codigo: c.codigo,
+          titulo: c.titulo,
+          veredicto: c.veredicto_asociado,
+          explicacion: c.explicacion,
+          fundamento: c.fundamento,
+          queHacer: c.que_hacer,
+          comoReconocer: c.como_reconocer,
+        }),
       ),
     };
   };

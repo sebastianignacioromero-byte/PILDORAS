@@ -42,9 +42,35 @@ describe('datos de ejemplo', () => {
     for (const d of dcis) expect((await fichasDeDci(d.slug)).length).toBeGreaterThan(0);
   });
 
-  it('entrega los 12 criterios y las fichas de cada uno', async () => {
-    expect(await obtenerCriterios()).toHaveLength(12);
+  it('entrega los 16 criterios y las fichas de cada uno', async () => {
+    expect(await obtenerCriterios()).toHaveLength(16);
     expect((await fichasDeCriterio('RANURA-LI')).length).toBeGreaterThan(0);
+  });
+
+  it('cada criterio trae explicación, por qué, qué hacer y cómo reconocerlo', async () => {
+    for (const c of await obtenerCriterios()) {
+      expect(c.titulo, c.codigo).toBeTruthy();
+      expect(c.explicacion, c.codigo).toBeTruthy();
+      expect(c.fundamento, c.codigo).toBeTruthy();
+      expect(c.queHacer, c.codigo).toBeTruthy();
+      expect(c.comoReconocer, c.codigo).toBeTruthy();
+    }
+  });
+
+  it('asigna el veredicto aprobado a los criterios nuevos', async () => {
+    const v = Object.fromEntries((await obtenerCriterios()).map((c) => [c.codigo, c.veredicto]));
+    expect(v).toMatchObject({
+      EFERVESCENTE: 'no_debe_partir',
+      VAGINAL: 'no_debe_partir',
+      MASTICABLE: 'se_puede_partir',
+      DISPERSABLE: 'se_puede_partir',
+    });
+  });
+
+  it('completa en cada ficha la explicación y el qué hacer de su criterio', async () => {
+    const [f] = await obtenerFichas();
+    expect(f.criterioExplicacion).toBeTruthy();
+    expect(f.criterioQueHacer).toBeTruthy();
   });
 
   it('falla con mensaje claro si se pide Supabase sin variables', () => {

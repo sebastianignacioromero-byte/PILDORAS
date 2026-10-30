@@ -10,6 +10,14 @@ test('buscar, entrar a la DCI y abrir una ficha', async ({ page }) => {
   await expect(page.getByText('Sí, se puede partir')).toBeVisible();
   await expect(page.getByText('Imagen ilustrativa, no a escala')).toBeVisible();
   await expect(page.getByRole('heading', { name: '¿Dudas con su tratamiento?' })).toBeVisible();
+  await expect(page.getByText('Qué hacer', { exact: true })).toBeVisible();
+});
+
+test('la página de un criterio explica por qué, qué hacer y cómo reconocerlo', async ({ page }) => {
+  await page.goto('criterios/lib-prolongada/');
+  for (const t of ['Por qué', 'Qué hacer', 'Cómo reconocerlo en el envase']) {
+    await expect(page.getByRole('heading', { name: t })).toBeVisible();
+  }
 });
 
 test('avisa cuando no encuentra el medicamento', async ({ page }) => {

@@ -56,6 +56,9 @@ export interface Ficha {
   criterioCodigo: string;
   criterioTitulo: string;
   criterioFundamento: string;
+  /** Explicación breve del criterio para el paciente. */
+  criterioExplicacion: string;
+  criterioQueHacer: string;
   principios: Principio[];
 }
 
@@ -78,6 +81,11 @@ export type DciBase = Pick<Dci, 'slug' | 'dci' | 'sinonimos' | 'resumen' | 'resu
 export interface Criterio {
   codigo: string;
   titulo: string;
-  fundamento: string;
   veredicto: Veredicto;
+  /** Explicación para el paciente (1–2 frases), visible en la ficha. */
+  explicacion: string;
+  /** Por qué: fundamento farmacéutico, visible en la página del criterio. */
+  fundamento: string;
+  queHacer: string;
+  comoReconocer: string;
 }
