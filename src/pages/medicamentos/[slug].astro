@@ -5,12 +5,12 @@ import Comprimido from '../../components/Comprimido.astro';
 import EtiquetaVeredicto from '../../components/EtiquetaVeredicto.astro';
 import AvisoInformativo from '../../components/AvisoInformativo.astro';
 import BloqueContacto from '../../components/BloqueContacto.astro';
+import ReportarError from '../../components/ReportarError.astro';
 import { fichasDeDci, obtenerFichas } from '../../lib/datos';
 import { ETIQUETA_FORMA, ETIQUETA_GEOMETRICA, ETIQUETA_LIBERACION, ETIQUETA_RANURA, concentracion, metaDescripcionFicha, tituloFicha } from '../../lib/textos';
 import { esCapsula } from '../../lib/comprimido';
 import { jsonldFicha } from '../../lib/jsonld';
 import { url } from '../../lib/url';
-import { CORREO_ERRORES } from '../../config';
 import type { Ficha } from '../../tipos';
 
 export async function getStaticPaths() {
@@ -31,7 +31,6 @@ const otras = await Promise.all(
     fichas: (await fichasDeDci(p.slug)).filter((f) => f.slug !== ficha.slug),
   })),
 );
-const asunto = encodeURIComponent(`Error en ficha: ${ficha.nombreComercial} (${ficha.slug})`);
 ---
 <Base titulo={titulo} descripcion={descripcion} jsonld={jsonldFicha(ficha, canonica)}>
   <div class="ficha">
@@ -99,7 +98,7 @@ const asunto = encodeURIComponent(`Error en ficha: ${ficha.nombreComercial} (${f
         </section>
       ))}
 
-      <p class="o10"><a href={`mailto:${CORREO_ERRORES}?subject=${asunto}`}>Reportar un error en esta ficha</a></p>
+      <div class="o10"><ReportarError slug={ficha.slug} nombre={`${ficha.nombreComercial}${ficha.laboratorio ? ` (${ficha.laboratorio})` : ''}`} /></div>
     </div>
   </div>
 </Base>

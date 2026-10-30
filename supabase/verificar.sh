@@ -45,6 +45,19 @@ select 'criterios_v2=' || count(*) || ' sin_textos=' || count(*) filter (where e
 select 'ficha_v2=' || slug || '|' || (criterio_explicacion <> '') || '|' || (criterio_que_hacer <> '') from v_fichas_publicas;
 SQL
 
+# Reportes: el público (anon) puede crear reportes pero no leerlos.
+$PSQL -f "$DIR/migracion_reportes.sql"
+$PSQL -f "$DIR/migracion_reportes.sql"
+# Como en Supabase con "exponer tablas automáticamente": anon tiene SELECT y solo RLS lo frena.
+$PSQL -c "grant usage on schema public to anon; grant select on public.reportes to anon" >/dev/null
+$PSQL -t -A <<'SQL'
+set role anon;
+insert into public.reportes (medicamento_slug, medicamento, mensaje) values ('x-1', 'X', 'Dato incorrecto');
+select 'reportes_visibles_para_anon=' || count(*) from public.reportes;
+reset role;
+select 'reportes_guardados=' || count(*) from public.reportes;
+SQL
+
 # Carga masiva opcional: se ejecuta dos veces para comprobar que no duplica.
 if [ -n "${1:-}" ]; then
   $PSQL -f "$DIR/migracion_carga.sql"

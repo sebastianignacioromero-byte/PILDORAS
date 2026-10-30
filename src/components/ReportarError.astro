@@ -1,0 +1,87 @@
+---
+// "Reportar un error": formulario que guarda el reporte en la tabla "reportes" de Supabase.
+import { configSupabase } from '../lib/datos';
+
+interface Props {
+  slug: string;
+  nombre: string;
+}
+const { slug, nombre } = Astro.props;
+const supabase = configSupabase();
+---
+<details class="reportar" data-slug={slug} data-nombre={nombre} data-supabase-url={supabase?.url} data-supabase-clave={supabase?.clave}>
+  <summary>Reportar un error en esta ficha</summary>
+  <form class="tarjeta" novalidate>
+    <label for={`reporte-${slug}`}>¿Qué está mal?</label>
+    <textarea id={`reporte-${slug}`} name="mensaje" rows="4" maxlength="1000" required></textarea>
+    <label for={`contacto-${slug}`}>Correo o teléfono para responderle <span class="apagado">(opcional)</span></label>
+    <input id={`contacto-${slug}`} name="contacto" type="text" maxlength="200" autocomplete="email" />
+    <p class="apagado chico">Usaremos su contacto solo para responder este reporte.</p>
+    <button type="submit">Enviar reporte</button>
+    <p class="estado" role="status" aria-live="polite"></p>
+  </form>
+</details>
+
+<script>
+  import { enviarReporte, validarReporte } from '../lib/reportes';
+
+  document.querySelectorAll<HTMLDetailsElement>('.reportar').forEach((raiz) => {
+    const form = raiz.querySelector('form')!;
+    const estado = raiz.querySelector<HTMLElement>('.estado')!;
+    const boton = form.querySelector('button')!;
+    form.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const datos = new FormData(form);
+      const reporte = {
+        medicamentoSlug: raiz.dataset.slug ?? '',
+        medicamento: raiz.dataset.nombre ?? '',
+        mensaje: String(datos.get('mensaje') ?? ''),
+        contacto: String(datos.get('contacto') ?? ''),
+      };
+      const error = validarReporte(reporte);
+      if (error) return void (estado.textContent = error);
+      const url = raiz.dataset.supabaseUrl;
+      const clave = raiz.dataset.supabaseClave;
+      if (!url || !clave) return void (estado.textContent = 'El formulario no está disponible en el modo de ejemplo.');
+      boton.disabled = true;
+      estado.textContent = 'Enviando…';
+      try {
+        await enviarReporte(reporte, { url, clave });
+        form.reset();
+        estado.textContent = 'Gracias. Revisaremos la ficha.';
+      } catch {
+        estado.textContent = 'No pudimos enviar su reporte. Intente de nuevo en unos minutos.';
+      } finally {
+        boton.disabled = false;
+      }
+    });
+  });
+</script>
+
+<style>
+  summary { color: var(--marca); font-weight: 700; cursor: pointer; text-decoration: underline; }
+  form { display: grid; gap: 8px; margin-top: 12px; max-width: 560px; }
+  label { font-weight: 700; }
+  textarea, input {
+    font: inherit;
+    border: 2px solid var(--linea);
+    border-radius: 12px;
+    padding: 10px 12px;
+    background: #fff;
+    color: var(--tinta);
+  }
+  textarea:focus, input:focus { outline: none; border-color: var(--marca); }
+  button {
+    justify-self: start;
+    font: inherit;
+    font-weight: 700;
+    background: var(--marca);
+    color: #fff;
+    border: 0;
+    border-radius: 14px;
+    padding: 12px 18px;
+    cursor: pointer;
+  }
+  button:disabled { opacity: 0.6; }
+  .estado { font-weight: 700; min-height: 1.5em; }
+</style>
