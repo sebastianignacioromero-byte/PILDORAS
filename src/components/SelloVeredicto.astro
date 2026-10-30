@@ -21,7 +21,8 @@ const t = VEREDICTOS[veredicto];
   </div>
   <p class="revision">
     <Icono nombre="escudo" class="escudo" />
-    Revisado por {QF_NOMBRE}, {QF_TITULO} · <time datetime={revisadoEn}>{fecha(revisadoEn)}</time>
+    <span>Revisado por {QF_TITULO} {QF_NOMBRE}</span>
+    <span class="sin-corte">· <time datetime={revisadoEn}>{fecha(revisadoEn)}</time></span>
   </p>
 </div>
 
@@ -62,5 +63,6 @@ const t = VEREDICTOS[veredicto];
     align-items: center;
     flex-wrap: wrap;
   }
+  .sin-corte { white-space: nowrap; }
   .revision :global(.escudo) { width: 16px; height: 16px; flex: none; }
 </style>
