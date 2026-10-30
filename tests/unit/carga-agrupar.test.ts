@@ -104,6 +104,10 @@ describe('casos reales del stock', () => {
     const [f] = agruparFichas([fila('DIXI 35 X 21CR ABB', 'CIPROTERONA, ETINILESTRADIOL')]);
     expect(f.principios.map((p) => p.cantidad)).toEqual([null, null]);
   });
+  it('prefiere las dosis de la Variante cuando el nombre trae una sola cifra para una asociación', () => {
+    const [f] = agruparFichas([fila('DAFLON 500MG X 60CR SER', 'DIOSMINA 450MG, HESPERIDINA 50MG')]);
+    expect(f.principios.map((p) => p.cantidad)).toEqual([450, 50]);
+  });
   it('MASTICABLE en el nombre manda sobre C', () => {
     expect(agruparFichas([fila('GLOBIFER MASTICABLE X 30C FQP', 'HIERRO HEMICO')])[0].criterio).toBe('MASTICABLE');
   });

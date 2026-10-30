@@ -5,7 +5,7 @@ import { VALORES_FORMA, VALORES_GEOMETRICA, VALORES_LIBERACION, VALORES_RANURA }
 import { VEREDICTOS } from '../../src/lib/textos';
 import type { FichaCarga, PrincipioCarga } from './agrupar';
 
-const MAX_PRINCIPIOS = 3;
+const MAX_PRINCIPIOS = 6;
 const ESTADOS = ['publicado', 'borrador'];
 
 const COLUMNAS: { titulo: string; ancho: number }[] = [

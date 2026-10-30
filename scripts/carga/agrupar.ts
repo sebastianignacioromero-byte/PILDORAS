@@ -113,9 +113,9 @@ export function agruparFichas(filas: FilaStock[]): FichaCarga[] {
       conc = sinUnidad[0].split('/').map((n) => ({ cantidad: Number(n.replace(',', '.')), unidad: 'mg' }));
       alertas.push('unidad asumida: mg');
     }
-    // Si el nombre no trae dosis, se usa la de la Variante.
+    // Si el nombre no trae una dosis por principio activo, se usa la de la Variante.
     const variante = partesVariante(g.variante);
-    if (conc.length === 0 && variante.length === dcis.length && variante.every((p) => p.dosis)) {
+    if (conc.length !== dcis.length && variante.length === dcis.length && variante.every((p) => p.dosis)) {
       conc = variante.map((p) => ({ cantidad: p.dosis!.cantidad, unidad: p.dosis!.unidad ?? 'mg' }));
       if (variante.some((p) => !p.dosis!.unidad)) alertas.push('unidad asumida: mg');
     }
