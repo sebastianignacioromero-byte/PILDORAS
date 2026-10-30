@@ -119,7 +119,9 @@ export async function leerRevision(ruta: string): Promise<FilaRevision[]> {
     indice.set('Comentario interno', indice.get('Nota del QF')!);
     indice.set('Nota para el paciente', 0);
   }
-  const faltan = COLUMNAS.filter((c) => !indice.has(c.titulo)).map((c) => c.titulo);
+  // Las columnas de principio activo 2 en adelante son opcionales (planillas con menos columnas).
+  const opcional = (t: string) => /^(Principio activo|Cantidad|Unidad) [2-9]$/.test(t);
+  const faltan = COLUMNAS.filter((c) => !indice.has(c.titulo) && !opcional(c.titulo)).map((c) => c.titulo);
   if (faltan.length) throw new Error(`Faltan columnas en la planilla: ${faltan.join(', ')}`);
 
   const salida: FilaRevision[] = [];

@@ -57,6 +57,20 @@ describe('notas', () => {
   });
 });
 
+describe('planillas con menos columnas de principio activo', () => {
+  it('se leen igual', async () => {
+    const ruta = join(dir, 'revision-3.xlsx');
+    await escribirRevision(fichas, ruta);
+    const wb = new ExcelJS.Workbook();
+    await wb.xlsx.readFile(ruta);
+    const hoja = wb.getWorksheet('Fichas')!;
+    const enc = (hoja.getRow(1).values as string[]).slice(1);
+    hoja.spliceColumns(enc.indexOf('Principio activo 4') + 1, 9);
+    await wb.xlsx.writeFile(ruta);
+    expect((await leerRevision(ruta)).map((r) => r.ficha.principios)).toEqual(fichas.map((f) => f.principios));
+  });
+});
+
 describe('planilla de laboratorios', () => {
   it('lista los códigos y lee los nombres completados', async () => {
     const ruta = join(dir, 'laboratorios.xlsx');
