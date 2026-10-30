@@ -1,4 +1,4 @@
-import type { FormaFarmaceutica, FormaGeometrica, Ficha, TipoLiberacion, TipoRanura, Veredicto } from '../tipos';
+import type { Dci, FormaFarmaceutica, FormaGeometrica, Ficha, TipoLiberacion, TipoRanura, Veredicto } from '../tipos';
 
 export interface TextoVeredicto {
   sello: string;
@@ -93,4 +93,37 @@ const fechaLarga = new Intl.DateTimeFormat('es-CL', { day: 'numeric', month: 'lo
 /** "28 de octubre de 2026" */
 export function fecha(iso: string): string {
   return fechaLarga.format(new Date(iso));
+}
+
+/** "50 mg" o, en una asociación, "50/12,5 mg" (o "50 mg/12,5 mcg" si cambian las unidades). */
+function fuerza(f: Pick<Ficha, 'principios'>): string {
+  const unidades = new Set(f.principios.map((p) => p.unidad));
+  if (unidades.size === 1) return `${f.principios.map((p) => numero.format(p.cantidad)).join('/')} ${f.principios[0].unidad}`;
+  return f.principios.map((p) => `${numero.format(p.cantidad)} ${p.unidad}`).join('/');
+}
+
+const escaparRegex = (t: string) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/** El nombre ya incluye todas las cantidades (p. ej. "Losarvit 50"). */
+function nombreTraeFuerza(f: Pick<Ficha, 'nombreComercial' | 'principios'>): boolean {
+  return f.principios.every((p) =>
+    new RegExp(`(^|[^0-9,])${escaparRegex(numero.format(p.cantidad))}($|[^0-9,])`).test(f.nombreComercial),
+  );
+}
+
+/** "¿Se puede partir Cozaar 50 mg?": distingue presentaciones de la misma marca. */
+export function tituloFicha(f: Pick<Ficha, 'nombreComercial' | 'principios'>): string {
+  const nombre = f.principios.length === 0 || nombreTraeFuerza(f) ? f.nombreComercial : `${f.nombreComercial} ${fuerza(f)}`;
+  return `¿Se puede partir ${nombre}?`;
+}
+
+export function metaDescripcionFicha(f: Ficha): string {
+  if (f.metaDescripcion) return f.metaDescripcion;
+  const lab = f.laboratorio ? `, ${f.laboratorio}` : '';
+  return `${f.nombreComercial} (${concentracion(f)}${lab}): ${VEREDICTOS[f.veredicto].sello.toLowerCase()}. ${f.criterioTitulo}. Revisado por químico farmacéutico.`;
+}
+
+/** "Metformina: ¿se puede partir?": evita el artículo, que cambia según la DCI. */
+export function tituloDci(d: Pick<Dci, 'dci'>): string {
+  return `${d.dci}: ¿se puede partir?`;
 }

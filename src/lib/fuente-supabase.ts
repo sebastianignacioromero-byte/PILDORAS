@@ -5,10 +5,17 @@ import type { DatosCrudos } from './datos';
 const POR_PAGINA = 1000;
 
 /** Supabase entrega como máximo 1000 filas por consulta: se pide por páginas hasta agotar. */
-async function todas<T>(cliente: SupabaseClient, tabla: string, columnas: string, filtro?: [string, unknown]): Promise<T[]> {
+async function todas<T>(
+  cliente: SupabaseClient,
+  tabla: string,
+  columnas: string,
+  orden: string,
+  filtro?: [string, unknown],
+): Promise<T[]> {
   const filas: T[] = [];
   for (let desde = 0; ; desde += POR_PAGINA) {
-    let consulta = cliente.from(tabla).select(columnas).range(desde, desde + POR_PAGINA - 1);
+    // Sin un orden fijo, Postgres puede repetir o saltar filas entre páginas.
+    let consulta = cliente.from(tabla).select(columnas).order(orden).range(desde, desde + POR_PAGINA - 1);
     if (filtro) consulta = consulta.eq(filtro[0], filtro[1]);
     const { data, error } = await consulta;
     if (error) throw new Error(`Supabase (${tabla}): ${error.message}`);
@@ -18,14 +25,21 @@ async function todas<T>(cliente: SupabaseClient, tabla: string, columnas: string
 }
 
 /** Lee las vistas públicas de Supabase con la clave anon (protegida por RLS). */
-export function crearCargaSupabase(url: string, clave: string): () => Promise<DatosCrudos> {
+export function crearCargaSupabase(url: string, clave: string, fetchPropio?: typeof fetch): () => Promise<DatosCrudos> {
   return async () => {
-    const cliente = createClient(url, clave, { auth: { persistSession: false } });
+    const cliente = createClient(url, clave, {
+      auth: { persistSession: false },
+      global: fetchPropio ? { fetch: fetchPropio } : {},
+    });
     const [fichas, dcis, criterios] = await Promise.all([
-      todas<Record<string, any>>(cliente, 'v_fichas_publicas', '*'),
-      todas<Record<string, any>>(cliente, 'v_dci_publicas', 'slug,dci,sinonimos,resumen,resumen_revisado_en'),
-      todas<Record<string, any>>(cliente, 'criterios_particion', 'codigo,titulo,fundamento,veredicto_asociado', ['activo', true]),
+      todas<Record<string, any>>(cliente, 'v_fichas_publicas', '*', 'slug'),
+      todas<Record<string, any>>(cliente, 'v_dci_publicas', 'slug,dci,sinonimos,resumen,resumen_revisado_en', 'slug'),
+      todas<Record<string, any>>(cliente, 'criterios_particion', 'codigo,titulo,fundamento,veredicto_asociado', 'codigo', ['activo', true]),
     ]);
+    // Nunca publicar un sitio vacío por error (proyecto equivocado, permisos o datos aún sin cargar).
+    if (fichas.length === 0) {
+      throw new Error('Supabase no devolvió ninguna ficha publicada. Revise el proyecto, los permisos de anon o cargue fichas antes de usar DATOS_FUENTE=supabase.');
+    }
     return {
       fichas: fichas.map(
         (f): Ficha => ({

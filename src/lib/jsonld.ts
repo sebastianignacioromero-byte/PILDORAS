@@ -1,7 +1,7 @@
 // Datos estructurados (schema.org) para que los buscadores entiendan quién revisa cada página.
 import type { Dci, Ficha } from '../tipos';
 import { CURIE_NOMBRE, CURIE_URL, QF_NOMBRE } from '../config';
-import { concentracion } from './textos';
+import { concentracion, tituloDci, tituloFicha } from './textos';
 
 const revisor = { '@type': 'Person', name: QF_NOMBRE, jobTitle: 'Químico farmacéutico' };
 const editor = { '@type': 'Organization', name: CURIE_NOMBRE, url: CURIE_URL };
@@ -11,7 +11,7 @@ export function jsonldFicha(f: Ficha, canonica: string): object {
   return {
     '@context': 'https://schema.org',
     '@type': 'MedicalWebPage',
-    name: `¿Se puede partir ${f.nombreComercial}?`,
+    name: tituloFicha(f),
     url: canonica,
     inLanguage: 'es-CL',
     lastReviewed: dia(f.revisadoEn),
@@ -26,7 +26,7 @@ export function jsonldDci(d: Dci, canonica: string): object {
   return {
     '@context': 'https://schema.org',
     '@type': 'MedicalWebPage',
-    name: `¿Se puede partir ${d.dci}?`,
+    name: tituloDci(d),
     url: canonica,
     inLanguage: 'es-CL',
     lastReviewed: dia(d.ultimaRevision),

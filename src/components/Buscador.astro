@@ -2,7 +2,7 @@
 // Buscador por marca o principio activo. Sin JavaScript, el formulario lleva al índice de DCI.
 // Con Supabase configurado consulta buscar_medicamentos; si no, busca en las fichas de ejemplo.
 import { aResultado } from '../lib/buscar';
-import { obtenerFichas } from '../lib/datos';
+import { configSupabase, obtenerFichas } from '../lib/datos';
 import { url } from '../lib/url';
 import Icono from './Icono.astro';
 
@@ -10,10 +10,10 @@ interface Props {
   enfocar?: boolean;
 }
 const { enfocar = false } = Astro.props;
-const conSupabase = Boolean(import.meta.env.PUBLIC_SUPABASE_URL && import.meta.env.PUBLIC_SUPABASE_ANON_KEY);
-const locales = conSupabase ? [] : (await obtenerFichas()).map(aResultado);
+const supabase = configSupabase();
+const locales = supabase ? undefined : JSON.stringify((await obtenerFichas()).map(aResultado));
 ---
-<div class="buscador" data-locales={conSupabase ? undefined : JSON.stringify(locales)}>
+<div class="buscador" data-locales={locales} data-supabase-url={supabase?.url} data-supabase-clave={supabase?.clave}>
   <form action={url('/dci/')} method="get" role="search">
     <label for="consulta">Busque por marca o principio activo</label>
     <div class="campo">
@@ -41,6 +41,7 @@ const locales = conSupabase ? [] : (await obtenerFichas()).map(aResultado);
   import { ICONOS } from '../lib/iconos';
   import { VEREDICTOS, concentracion } from '../lib/textos';
   import { url } from '../lib/url';
+  import { normalizar } from '../lib/normalizar';
 
   const ESPERA_MS = 250;
 
@@ -48,8 +49,8 @@ const locales = conSupabase ? [] : (await obtenerFichas()).map(aResultado);
     t.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 
   async function crearBuscador(raiz: HTMLElement): Promise<Buscador> {
-    const urlSupabase = import.meta.env.PUBLIC_SUPABASE_URL;
-    const clave = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+    const urlSupabase = raiz.dataset.supabaseUrl;
+    const clave = raiz.dataset.supabaseClave;
     if (urlSupabase && clave) {
       const { crearBuscadorSupabase } = await import('../lib/buscar-supabase');
       return crearBuscadorSupabase(urlSupabase, clave);
@@ -81,10 +82,13 @@ const locales = conSupabase ? [] : (await obtenerFichas()).map(aResultado);
     const buscador = await crearBuscador(raiz);
     let temporizador: number | undefined;
     let turno = 0;
+    // Consulta que produjo la lista visible: Enter solo abre un resultado si coincide con lo escrito.
+    let consultaMostrada = '';
 
-    const mostrar = (mensaje: string, html = '') => {
+    const mostrar = (mensaje: string, html = '', consulta = '') => {
       estado.innerHTML = mensaje;
       lista.innerHTML = html;
+      consultaMostrada = consulta;
     };
 
     async function ejecutar() {
@@ -100,7 +104,7 @@ const locales = conSupabase ? [] : (await obtenerFichas()).map(aResultado);
         }
         const dcis = dcisDeResultados(resultados, q);
         const n = resultados.length;
-        mostrar(`${n} ${n === 1 ? 'resultado' : 'resultados'}`, dcis.map(itemDci).join('') + resultados.map(itemMarca).join(''));
+        mostrar(`${n} ${n === 1 ? 'resultado' : 'resultados'}`, dcis.map(itemDci).join('') + resultados.map(itemMarca).join(''), normalizar(q));
       } catch (e) {
         if (mio !== turno) return;
         if (!(e instanceof ErrorBusqueda)) console.error(e);
@@ -112,12 +116,14 @@ const locales = conSupabase ? [] : (await obtenerFichas()).map(aResultado);
       window.clearTimeout(temporizador);
       temporizador = window.setTimeout(ejecutar, ESPERA_MS);
     });
-    raiz.querySelector('form')!.addEventListener('submit', (ev) => {
+    raiz.querySelector('form')!.addEventListener('submit', async (ev) => {
       ev.preventDefault();
       window.clearTimeout(temporizador);
-      const primero = lista.querySelector<HTMLAnchorElement>('a');
-      if (primero && debeBuscar(entrada.value)) primero.click();
-      else ejecutar();
+      if (!debeBuscar(entrada.value)) return;
+      const q = normalizar(entrada.value);
+      if (consultaMostrada !== q) await ejecutar();
+      if (consultaMostrada !== q || normalizar(entrada.value) !== q) return;
+      lista.querySelector<HTMLAnchorElement>('a.resultado')?.click();
     });
 
     // Flechas: del campo al primer resultado y entre resultados.

@@ -17,12 +17,21 @@ function entorno(): Entorno {
   return { ...process.env, ...(import.meta.env as Entorno) };
 }
 
-export function crearFuente(env: Entorno): () => Promise<DatosCrudos> {
-  if ((env.DATOS_FUENTE ?? 'ejemplo') !== 'supabase') return cargarEjemplo;
+/**
+ * Conexión a Supabase, solo si DATOS_FUENTE=supabase. Las páginas y el buscador usan esta misma decisión,
+ * para que nunca se mezclen datos de ejemplo con datos reales.
+ */
+export function configSupabase(env: Entorno = entorno()): { url: string; clave: string } | null {
+  if ((env.DATOS_FUENTE ?? 'ejemplo') !== 'supabase') return null;
   if (!env.PUBLIC_SUPABASE_URL || !env.PUBLIC_SUPABASE_ANON_KEY) {
     throw new Error('Faltan PUBLIC_SUPABASE_URL o PUBLIC_SUPABASE_ANON_KEY');
   }
-  return crearCargaSupabase(env.PUBLIC_SUPABASE_URL, env.PUBLIC_SUPABASE_ANON_KEY);
+  return { url: env.PUBLIC_SUPABASE_URL, clave: env.PUBLIC_SUPABASE_ANON_KEY };
+}
+
+export function crearFuente(env: Entorno): () => Promise<DatosCrudos> {
+  const supabase = configSupabase(env);
+  return supabase ? crearCargaSupabase(supabase.url, supabase.clave) : cargarEjemplo;
 }
 
 /** true mientras el sitio muestra datos ficticios de ejemplo. */

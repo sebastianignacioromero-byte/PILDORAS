@@ -5,7 +5,7 @@ import EtiquetaVeredicto from '../../components/EtiquetaVeredicto.astro';
 import AvisoInformativo from '../../components/AvisoInformativo.astro';
 import BloqueContacto from '../../components/BloqueContacto.astro';
 import { fichasDeDci, obtenerDcis } from '../../lib/datos';
-import { concentracion } from '../../lib/textos';
+import { concentracion, tituloDci } from '../../lib/textos';
 import { jsonldDci } from '../../lib/jsonld';
 import { url } from '../../lib/url';
 import type { Dci } from '../../tipos';
@@ -19,12 +19,12 @@ const { dci } = Astro.props as { dci: Dci };
 const fichas = await fichasDeDci(dci.slug);
 const canonica = new URL(Astro.url.pathname, Astro.site).href;
 const n = fichas.length;
-const nombre = dci.dci.toLocaleLowerCase('es');
+const titulo = tituloDci(dci);
 const descripcion = `${n} ${n === 1 ? 'marca' : 'marcas'} con ${dci.dci}: cuáles se pueden partir, cuáles no se deben partir y por qué. Revisado por químico farmacéutico.`;
 ---
-<Base titulo={`¿Se puede partir el ${nombre}?`} descripcion={descripcion} noindex={!dci.resumen} jsonld={jsonldDci(dci, canonica)}>
+<Base titulo={titulo} descripcion={descripcion} noindex={!dci.resumen} jsonld={jsonldDci(dci, canonica)}>
   <nav class="migas" aria-label="Ruta"><a href={url('/dci/')}>Principios activos</a></nav>
-  <h1>¿Se puede partir el {nombre}?</h1>
+  <h1>{titulo}</h1>
   {dci.resumen && <p class="resumen">{dci.resumen}</p>}
   <p class="apagado">
     Depende de la marca: la forma del comprimido cambia según el laboratorio. Elija la suya.

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { crearFuente, obtenerCriterios, obtenerDcis, obtenerFichas, fichasDeCriterio, fichasDeDci } from '../../src/lib/datos';
+import { configSupabase, crearFuente, obtenerCriterios, obtenerDcis, obtenerFichas, fichasDeCriterio, fichasDeDci } from '../../src/lib/datos';
 
 describe('datos de ejemplo', () => {
   it('cubren los 3 veredictos, ≥6 formas, las 5 ranuras y una cápsula', async () => {
@@ -49,5 +49,16 @@ describe('datos de ejemplo', () => {
 
   it('falla con mensaje claro si se pide Supabase sin variables', () => {
     expect(() => crearFuente({ DATOS_FUENTE: 'supabase' })).toThrow('Faltan PUBLIC_SUPABASE_URL o PUBLIC_SUPABASE_ANON_KEY');
+  });
+});
+
+describe('configSupabase', () => {
+  const vars = { PUBLIC_SUPABASE_URL: 'https://x.supabase.co', PUBLIC_SUPABASE_ANON_KEY: 'k' };
+  it('no usa Supabase mientras DATOS_FUENTE no sea supabase, aunque existan las variables', () => {
+    expect(configSupabase(vars)).toBeNull();
+    expect(configSupabase({ ...vars, DATOS_FUENTE: 'ejemplo' })).toBeNull();
+  });
+  it('entrega URL y clave cuando DATOS_FUENTE=supabase', () => {
+    expect(configSupabase({ ...vars, DATOS_FUENTE: 'supabase' })).toEqual({ url: 'https://x.supabase.co', clave: 'k' });
   });
 });

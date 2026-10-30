@@ -4,7 +4,7 @@ test('buscar, entrar a la DCI y abrir una ficha', async ({ page }) => {
   await page.goto('./');
   await page.getByLabel('Busque por marca o principio activo').fill('losartan');
   await page.getByRole('link', { name: /Principio activo\s*Losartán/ }).click();
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('losartán');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Losartán: ¿se puede partir?');
   await page.getByRole('link', { name: /Losarvit 50\b/ }).click();
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Losarvit 50');
   await expect(page.getByText('Sí, se puede partir')).toBeVisible();
@@ -28,4 +28,14 @@ test('marca el sitio de ejemplo como no indexable', async ({ page }) => {
   await page.goto('./');
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
   await expect(page.getByText(/Datos de ejemplo/)).toBeVisible();
+});
+
+test('Enter tras escribir rápido abre el medicamento de la consulta actual, no el de la anterior', async ({ page }) => {
+  await page.goto('./');
+  const campo = page.getByLabel('Busque por marca o principio activo');
+  await campo.fill('gl');
+  await expect(page.getByRole('link', { name: /Glucoret 850/ })).toBeVisible();
+  await campo.fill('gastrozol');
+  await campo.press('Enter');
+  await expect(page).toHaveURL(/medicamentos\/gastrozol-20-8\/$/);
 });
