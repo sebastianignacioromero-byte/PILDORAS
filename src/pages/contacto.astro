@@ -1,10 +1,9 @@
 ---
 import Base from '../layouts/Base.astro';
 import BloqueContacto from '../components/BloqueContacto.astro';
-import { CORREO_ERRORES } from '../config';
 ---
 <Base ancho="lectura" titulo="Contacto" descripcion="Consulte a un químico farmacéutico de Farmacias Curie o reporte un error en Píldoras.">
   <h1>Contacto</h1>
   <BloqueContacto />
-  <p>¿Encontró un error en una ficha o no encuentra su medicamento? Escríbanos a <a href={`mailto:${CORREO_ERRORES}`}>{CORREO_ERRORES}</a>.</p>
+  <p>¿Encontró un error en una ficha? Use el enlace <strong>Reportar un error en esta ficha</strong>, al final de cada ficha.</p>
 </Base>

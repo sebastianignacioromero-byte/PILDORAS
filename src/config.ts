@@ -6,6 +6,4 @@ export const QF_TITULO = 'QF';
 
 export const CURIE_NOMBRE = 'Farmacias Curie';
 export const CURIE_COMUNA = 'Providencia';
-export const CURIE_URL = 'https://farmaciascurie.cl'; // PROVISIONAL
-export const WHATSAPP_URL = 'https://wa.me/56900000000'; // PROVISIONAL: número real de Curie
-export const CORREO_ERRORES = 'contacto@farmaciascurie.cl'; // PROVISIONAL
+export const CURIE_URL = 'https://farmaciascurie.cl';

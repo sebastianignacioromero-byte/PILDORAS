@@ -62,7 +62,7 @@ GitHub Actions (`.github/workflows/deploy.yml`) prueba, construye y publica en c
 
 ## Datos editables
 
-Nombre del QF, WhatsApp, web de Curie y correo para reportar errores: `src/config.ts` (los valores marcados `PROVISIONAL` deben confirmarse).
+Nombre del QF y web de Curie: `src/config.ts`.
 
 ## Carga masiva desde el stock de Curie
 

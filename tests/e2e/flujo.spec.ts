@@ -47,3 +47,12 @@ test('Enter tras escribir rápido abre el medicamento de la consulta actual, no 
   await campo.press('Enter');
   await expect(page).toHaveURL(/medicamentos\/gastrozol-20-8\/$/);
 });
+
+test('el bloque de contacto lleva a la web de Curie, sin WhatsApp', async ({ page }) => {
+  for (const ruta of ['medicamentos/losarvit-50-1/', 'contacto/', 'privacidad/']) {
+    await page.goto(ruta);
+    await expect(page.getByText(/whatsapp/i)).toHaveCount(0);
+  }
+  await page.goto('contacto/');
+  await expect(page.getByRole('link', { name: 'Visitar Farmacias Curie' })).toHaveAttribute('href', 'https://farmaciascurie.cl');
+});
