@@ -59,8 +59,8 @@ test('el bloque de contacto lleva a la web de Curie, sin WhatsApp', async ({ pag
 
 test('muestra el logo y declara íconos y miniatura para compartir', async ({ page, request, baseURL }) => {
   await page.goto('./');
-  const logo = page.locator('header img[src$="logo.svg"]');
-  await expect(logo).toBeVisible();
+  await expect(page.locator('header img[src$="logo-simbolo.png"]')).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Píldoras' })).toBeVisible();
   const og = await page.locator('meta[property="og:image"]').getAttribute('content');
   expect(og).toMatch(/^https:\/\/.+\/og\.png$/);
   for (const sel of ['link[rel="icon"]', 'link[rel="apple-touch-icon"]']) {
