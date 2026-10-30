@@ -88,6 +88,22 @@ describe('casos reales del stock', () => {
     expect(f.map((x) => x.productos[0])).toEqual(['GAVISCON COMPRIMIDOS X 16U REC']);
     expect(f[0].estado).toBe('borrador');
   });
+  it('separa una asociación inferida del nombre y asume mg', () => {
+    const [f] = agruparFichas([fila('AMOXICILINA/A.CLAVULANICO 875/125 X 14CR ASC', '')]);
+    expect(f.principios).toEqual([
+      { dci: 'Amoxicilina', cantidad: 875, unidad: 'mg' },
+      { dci: 'A.clavulanico', cantidad: 125, unidad: 'mg' },
+    ]);
+  });
+  it('asume mg para una sola cifra sin unidad cuando hay un principio activo', () => {
+    const [f] = agruparFichas([fila('CARVEDILOL 6,25 X 30CR DFM', '')]);
+    expect(f.principios).toEqual([{ dci: 'Carvedilol', cantidad: 6.25, unidad: 'mg' }]);
+    expect(f.alertas).toContain('unidad asumida: mg');
+  });
+  it('no asume mg en una cifra que es parte del nombre de una asociación', () => {
+    const [f] = agruparFichas([fila('DIXI 35 X 21CR ABB', 'CIPROTERONA, ETINILESTRADIOL')]);
+    expect(f.principios.map((p) => p.cantidad)).toEqual([null, null]);
+  });
   it('MASTICABLE en el nombre manda sobre C', () => {
     expect(agruparFichas([fila('GLOBIFER MASTICABLE X 30C FQP', 'HIERRO HEMICO')])[0].criterio).toBe('MASTICABLE');
   });

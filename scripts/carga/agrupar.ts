@@ -25,7 +25,10 @@ export interface FichaCarga extends Clasificacion {
   laboratorio: string;
   sigla: string;
   principios: PrincipioCarga[];
+  /** Se publica en la ficha. */
   nota: string;
+  /** Uso interno del QF; nunca se publica. */
+  comentario: string;
 }
 
 const TIPOS = new Set(['MEDICAMENTO', 'CENABAST', 'MEDICAMENTO CONTROLADO']);
@@ -100,7 +103,7 @@ export function agruparFichas(filas: FilaStock[]): FichaCarga[] {
     let dcis = limpiarVariante(g.variante);
     if (dcis.length === 0) {
       const inferida = inferirDci(g.base);
-      if (inferida) dcis = [inferida];
+      if (inferida) dcis = inferida.split(/\s*\/\s*/).filter(Boolean);
       if (inferida && !conocidas.has(normalizar(inferida))) alertas.push('principio activo inferido');
     }
     let conc = leerConcentraciones(g.base);
@@ -115,6 +118,12 @@ export function agruparFichas(filas: FilaStock[]): FichaCarga[] {
     if (conc.length === 0 && variante.length === dcis.length && variante.every((p) => p.dosis)) {
       conc = variante.map((p) => ({ cantidad: p.dosis!.cantidad, unidad: p.dosis!.unidad ?? 'mg' }));
       if (variante.some((p) => !p.dosis!.unidad)) alertas.push('unidad asumida: mg');
+    }
+    // Una sola cifra sin unidad con un solo principio activo ("CARVEDILOL 6,25", "PAUSE 500"): mg.
+    const cifra = g.base.match(/\s(\d+(?:[.,]\d+)?)(?:\s|$)/);
+    if (conc.length === 0 && dcis.length === 1 && cifra && !partesVariante(g.variante).some((p) => p.dosis)) {
+      conc = [{ cantidad: Number(cifra[1].replace(',', '.')), unidad: 'mg' }];
+      alertas.push('unidad asumida: mg');
     }
     const principios = dcis.map((d, i) => ({
       dci: oracion(d),
@@ -139,6 +148,7 @@ export function agruparFichas(filas: FilaStock[]): FichaCarga[] {
       sigla: g.sigla,
       principios,
       nota: '',
+      comentario: '',
     };
   });
 }

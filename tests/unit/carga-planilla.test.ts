@@ -33,6 +33,30 @@ describe('planilla de revisión', () => {
   });
 });
 
+describe('notas', () => {
+  it('separa la nota para el paciente del comentario interno', async () => {
+    const ruta = join(dir, 'revision-notas.xlsx');
+    await escribirRevision([{ ...fichas[0], nota: 'Parta por la ranura', comentario: 'revisar envase' }], ruta);
+    const [r] = await leerRevision(ruta);
+    expect(r.ficha).toMatchObject({ nota: 'Parta por la ranura', comentario: 'revisar envase' });
+  });
+  it('en planillas antiguas, "Nota del QF" se lee como comentario interno y no se publica', async () => {
+    const ruta = join(dir, 'revision-antigua.xlsx');
+    await escribirRevision(fichas, ruta);
+    const wb = new ExcelJS.Workbook();
+    await wb.xlsx.readFile(ruta);
+    const hoja = wb.getWorksheet('Fichas')!;
+    const enc = (hoja.getRow(1).values as string[]).slice(1);
+    const nota = enc.indexOf('Nota para el paciente') + 1;
+    hoja.getCell(1, nota).value = 'Nota del QF';
+    hoja.getCell(2, nota).value = 'SE IRAN ARREGLANDO';
+    hoja.spliceColumns(enc.indexOf('Comentario interno') + 1, 1);
+    await wb.xlsx.writeFile(ruta);
+    const [r] = await leerRevision(ruta);
+    expect(r.ficha).toMatchObject({ nota: '', comentario: 'SE IRAN ARREGLANDO' });
+  });
+});
+
 describe('planilla de laboratorios', () => {
   it('lista los códigos y lee los nombres completados', async () => {
     const ruta = join(dir, 'laboratorios.xlsx');

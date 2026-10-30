@@ -27,7 +27,8 @@ const COLUMNAS: { titulo: string; ancho: number }[] = [
   { titulo: 'Criterio', ancho: 18 },
   { titulo: 'Veredicto', ancho: 18 },
   { titulo: 'Estado', ancho: 11 },
-  { titulo: 'Nota del QF', ancho: 30 },
+  { titulo: 'Nota para el paciente', ancho: 30 },
+  { titulo: 'Comentario interno', ancho: 30 },
   { titulo: 'Alertas', ancho: 40 },
 ];
 
@@ -78,6 +79,7 @@ export async function escribirRevision(fichas: FichaCarga[], ruta: string): Prom
       f.criterio ? veredictoDe.get(f.criterio) ?? '' : '',
       f.estado,
       f.nota,
+      f.comentario,
       f.alertas.join('; '),
     ]);
   }
@@ -111,13 +113,19 @@ export async function leerRevision(ruta: string): Promise<FilaRevision[]> {
   if (!hoja) throw new Error('La planilla no tiene la hoja "Fichas".');
   const indice = new Map<string, number>();
   hoja.getRow(1).eachCell((c, n) => indice.set(texto(c.value), n));
+  // Planillas antiguas: "Nota del QF" era una sola columna y se usó para comentarios internos.
+  const antigua = indice.has('Nota del QF') && !indice.has('Comentario interno');
+  if (antigua) {
+    indice.set('Comentario interno', indice.get('Nota del QF')!);
+    indice.set('Nota para el paciente', 0);
+  }
   const faltan = COLUMNAS.filter((c) => !indice.has(c.titulo)).map((c) => c.titulo);
   if (faltan.length) throw new Error(`Faltan columnas en la planilla: ${faltan.join(', ')}`);
 
   const salida: FilaRevision[] = [];
   hoja.eachRow((r, n) => {
     if (n === 1) return;
-    const v = (titulo: string) => texto(r.getCell(indice.get(titulo)!).value);
+    const v = (titulo: string) => (indice.get(titulo) ? texto(r.getCell(indice.get(titulo)!).value) : '');
     if (!v('Clave')) return;
     const principios: PrincipioCarga[] = [];
     for (let i = 1; i <= MAX_PRINCIPIOS; i++) {
@@ -142,7 +150,8 @@ export async function leerRevision(ruta: string): Promise<FilaRevision[]> {
         ranura: v('Ranura') as FichaCarga['ranura'],
         criterio: v('Criterio') || null,
         estado: v('Estado') as FichaCarga['estado'],
-        nota: v('Nota del QF'),
+        nota: v('Nota para el paciente'),
+        comentario: v('Comentario interno'),
         alertas: v('Alertas') ? v('Alertas').split('; ') : [],
       },
     });
