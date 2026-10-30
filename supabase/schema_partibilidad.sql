@@ -32,7 +32,7 @@ create type public.forma_geometrica as enum (
 );
 
 create type public.tipo_liberacion as enum (
-  'inmediata', 'prolongada', 'modificada', 'retardada',
+  'inmediata', 'prolongada', 'modificada', 'osmotica', 'retardada',
   'gastrorresistente', 'bucodispersable', 'sublingual',
   'efervescente', 'masticable'
 );
@@ -41,8 +41,11 @@ create type public.tipo_ranura as enum (
   'sin_ranura', 'simple', 'doble_cruz', 'multiple', 'solo_decorativa'
 );
 
+-- se_puede_partir: puede partirse.
+-- no_debe_partir: razón farmacéutica (liberación, recubrimiento, dosis, riesgo).
+-- no_puede_partir: impedimento físico (cápsula u otra forma no sólida).
 create type public.veredicto_particion as enum (
-  'partible', 'condicional', 'no_partible'
+  'se_puede_partir', 'no_debe_partir', 'no_puede_partir'
 );
 
 create type public.estado_ficha as enum (
@@ -461,41 +464,54 @@ revoke execute on function public.resolver_aporte(bigint, public.estado_aporte, 
 grant  execute on function public.resolver_aporte(bigint, public.estado_aporte, text, bigint) to authenticated;
 grant  execute on function public.buscar_medicamentos(text, int) to anon, authenticated;
 
--- ---------- 15. Criterios iniciales (BORRADOR: ajústelos según su criterio QF) ----------
+-- ---------- 15. Criterios iniciales ----------
+-- BORRADOR: fundamentos pendientes de revisión QF.
 insert into public.criterios_particion (codigo, titulo, fundamento, veredicto_asociado) values
 ('RANURA-LI',
  'Ranurado, liberación inmediata',
  'Comprimido de liberación inmediata con ranura funcional. Puede partirse por la ranura sin alterar la liberación del fármaco.',
- 'partible'),
+ 'se_puede_partir'),
 ('SIN-RANURA-LI',
  'Sin ranura, liberación inmediata',
- 'Comprimido de liberación inmediata sin ranura. Puede partirse con partidor, pero la división puede ser desigual y entregar dosis irregulares. Solo por indicación profesional.',
- 'condicional'),
+ 'Comprimido de liberación inmediata sin ranura. Puede partirse, pero use un partidor de comprimidos: sin ranura la división puede ser desigual.',
+ 'se_puede_partir'),
 ('RECUB-ESTETICO',
  'Recubrimiento solo estético o de sabor',
- 'El recubrimiento no modifica la liberación. Puede partirse, aunque el sabor o la irritación local pueden verse afectados.',
- 'condicional'),
+ 'El recubrimiento no modifica la liberación del fármaco. Puede partirse, aunque el sabor puede ser desagradable.',
+ 'se_puede_partir'),
 ('LIB-PROLONGADA',
- 'Liberación prolongada o modificada',
- 'Partir el comprimido destruye el mecanismo de liberación controlada y puede liberar toda la dosis de una vez, con riesgo de toxicidad.',
- 'no_partible'),
+ 'Liberación prolongada',
+ 'Partir el comprimido destruye el mecanismo de liberación prolongada y puede liberar toda la dosis de una vez, con riesgo de toxicidad.',
+ 'no_debe_partir'),
+('LIB-OSMOTICA',
+ 'Liberación osmótica',
+ 'El comprimido funciona como una bomba osmótica que libera el fármaco a través de un orificio. Si se parte, deja de funcionar y la dosis se libera de forma descontrolada.',
+ 'no_debe_partir'),
 ('ENTERICO',
  'Recubrimiento entérico o gastrorresistente',
- 'El recubrimiento protege el fármaco del ácido gástrico o al estómago del fármaco. Al partirlo se pierde esa protección.',
- 'no_partible'),
+ 'El recubrimiento protege el fármaco del ácido del estómago, o al estómago del fármaco. Al partirlo se pierde esa protección.',
+ 'no_debe_partir'),
+('SUBLINGUAL',
+ 'Comprimido sublingual',
+ 'Está diseñado para disolverse bajo la lengua y absorberse por la mucosa de la boca. Partirlo altera la dosis y su absorción.',
+ 'no_debe_partir'),
 ('BUCODISPERSABLE',
- 'Bucodispersable, sublingual o efervescente',
- 'Forma diseñada para disolverse en boca, bajo la lengua o en agua. No debe partirse ni alterarse.',
- 'no_partible'),
+ 'Comprimido bucodispersable',
+ 'Está diseñado para deshacerse en la boca. Es frágil y al partirlo se desmorona, por lo que la dosis deja de ser exacta.',
+ 'no_debe_partir'),
 ('MTE',
  'Margen terapéutico estrecho',
- 'Pequeñas variaciones de dosis pueden causar ineficacia o toxicidad. Partir solo bajo indicación y control del profesional.',
- 'condicional'),
+ 'Pequeñas diferencias en la dosis pueden hacer que el medicamento no funcione o que sea tóxico. No debe partirse salvo indicación expresa y control del profesional.',
+ 'no_debe_partir'),
+('DOSIS-MCG',
+ 'Dosis muy pequeña (microgramos)',
+ 'Contiene una cantidad muy pequeña de fármaco. Partirlo puede repartir el principio activo de forma desigual entre las mitades.',
+ 'no_debe_partir'),
 ('PELIGROSO',
  'Fármaco peligroso o citotóxico',
- 'Su manipulación o el polvo generado al partirlo implican riesgo de exposición. No debe partirse.',
- 'no_partible'),
+ 'Su manipulación o el polvo que se genera al partirlo exponen a quien lo manipula al fármaco. No debe partirse.',
+ 'no_debe_partir'),
 ('NO-SOLIDA',
  'Cápsula u otra forma no partible',
- 'La forma farmacéutica no permite una división segura ni exacta de la dosis.',
- 'no_partible');
+ 'La forma farmacéutica no permite dividirla de manera física ni exacta.',
+ 'no_puede_partir');

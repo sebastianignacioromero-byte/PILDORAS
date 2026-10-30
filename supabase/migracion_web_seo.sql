@@ -2,7 +2,8 @@
 -- MIGRACIÓN WEB / SEO - App de partibilidad de comprimidos
 -- Ejecutar DESPUÉS de schema_partibilidad.sql
 -- Agrega: slugs, textos editoriales, vistas públicas para páginas
--- de principio activo (DCI) y soporte para sitemap.
+-- de principio activo (DCI), soporte para sitemap y la versión web
+-- de buscar_medicamentos (devuelve slug y principios).
 -- =====================================================================
 
 -- ---------- 1. Función slugify ----------
@@ -98,9 +99,9 @@ select
   pa.resumen,
   pa.resumen_revisado_en,
   count(distinct m.id)                                              as n_presentaciones,
-  count(distinct m.id) filter (where m.veredicto = 'partible')      as n_partibles,
-  count(distinct m.id) filter (where m.veredicto = 'condicional')   as n_condicionales,
-  count(distinct m.id) filter (where m.veredicto = 'no_partible')   as n_no_partibles,
+  count(distinct m.id) filter (where m.veredicto = 'se_puede_partir') as n_se_puede,
+  count(distinct m.id) filter (where m.veredicto = 'no_debe_partir')  as n_no_debe,
+  count(distinct m.id) filter (where m.veredicto = 'no_puede_partir') as n_no_puede,
   max(m.revisado_en)                                                as ultima_revision
 from public.principios_activos pa
 join public.medicamento_principios mp on mp.principio_activo_id = pa.id
@@ -173,3 +174,72 @@ select 'criterio' as tipo, lower(codigo) as slug, actualizado_en as lastmod
 grant select on public.v_dci_publicas   to anon, authenticated;
 grant select on public.v_fichas_publicas to anon, authenticated;
 grant select on public.v_sitemap         to anon, authenticated;
+
+-- ---------- 10. Búsqueda para la web ----------
+-- Reemplaza la versión del esquema base: devuelve slug y principios (jsonb)
+-- para que cada resultado enlace a su ficha y a sus páginas de DCI.
+drop function if exists public.buscar_medicamentos(text, int);
+
+create or replace function public.buscar_medicamentos(q text, lim int default 30)
+returns table (
+  id                 bigint,
+  slug               text,
+  nombre_comercial   text,
+  laboratorio        text,
+  principios         jsonb,
+  forma_farmaceutica public.forma_farmaceutica,
+  liberacion         public.tipo_liberacion,
+  forma_geometrica   public.forma_geometrica,
+  ranura             public.tipo_ranura,
+  veredicto          public.veredicto_particion,
+  relevancia         real
+)
+language sql
+stable
+set search_path = public, extensions
+as $$
+  with consulta as (
+    select lower(public.f_unaccent(trim(q))) as qn
+  )
+  select
+    m.id,
+    m.slug,
+    m.nombre_comercial,
+    m.laboratorio,
+    coalesce(
+      jsonb_agg(
+        jsonb_build_object(
+          'dci',      pa.dci,
+          'slug',     pa.slug,
+          'cantidad', mp.cantidad,
+          'unidad',   mp.unidad
+        ) order by pa.dci
+      ) filter (where pa.id is not null),
+      '[]'::jsonb
+    ) as principios,
+    m.forma_farmaceutica,
+    m.liberacion,
+    m.forma_geometrica,
+    m.ranura,
+    m.veredicto,
+    greatest(
+      similarity(m.nombre_norm, c.qn),
+      coalesce(max(similarity(pa.dci_norm, c.qn)), 0)
+    ) as relevancia
+  from public.medicamentos m
+  cross join consulta c
+  left join public.medicamento_principios mp on mp.medicamento_id = m.id
+  left join public.principios_activos pa on pa.id = mp.principio_activo_id
+  where m.estado = 'publicado'
+    and length(c.qn) >= 2
+  group by m.id, c.qn
+  having
+       m.nombre_norm like '%' || c.qn || '%'
+    or similarity(m.nombre_norm, c.qn) > 0.3
+    or bool_or(pa.dci_norm like '%' || c.qn || '%')
+    or coalesce(max(similarity(pa.dci_norm, c.qn)), 0) > 0.3
+  order by relevancia desc, m.nombre_comercial
+  limit least(lim, 100);
+$$;
+
+grant execute on function public.buscar_medicamentos(text, int) to anon, authenticated;

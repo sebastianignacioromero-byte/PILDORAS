@@ -1,5 +1,7 @@
 # Proyecto: Web informativa de partibilidad de comprimidos (Chile)
 
+> **Nota (30-10-2026):** documento histórico. Los veredictos vigentes son `se_puede_partir`, `no_debe_partir` y `no_puede_partir`, y el SQL vive ahora en `supabase/`. Lo vigente está en `docs/superpowers/specs/2026-10-30-pildoras-v1-design.md`.
+
 Documento de traspaso para continuar el desarrollo en Claude Code.
 
 ## 1. Contexto
