@@ -1,4 +1,4 @@
-// Listas por principio activo, propuestas en el documento de criterios. PENDIENTES DE APROBACIÓN DEL QF.
+// Listas por principio activo, aprobadas por el QF el 30-10-2026 (documento "Píldoras · Criterios de partición").
 // Se comparan sin tildes ni mayúsculas, como parte del nombre del principio activo
 // (así "litio" cubre "litio carbonato" y "valproico" cubre "ácido valproico").
 
