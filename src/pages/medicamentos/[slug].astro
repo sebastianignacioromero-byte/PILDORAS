@@ -34,63 +34,90 @@ const otras = await Promise.all(
 const asunto = encodeURIComponent(`Error en ficha: ${ficha.nombreComercial} (${ficha.slug})`);
 ---
 <Base titulo={titulo} descripcion={descripcion} jsonld={jsonldFicha(ficha, canonica)}>
-  <nav class="migas" aria-label="Principio activo">
-    {ficha.principios.map((p, i) => (
-      <>{i > 0 && ' + '}<a href={url(`/dci/${p.slug}/`)}>{p.dci}</a></>
-    ))}
-  </nav>
-
-  <header class="encabezado">
-    <h1>{titulo}</h1>
-    <p class="apagado">{conc}{ficha.laboratorio && ` · ${ficha.laboratorio}`}</p>
-  </header>
-
-  <SelloVeredicto veredicto={ficha.veredicto} revisadoEn={ficha.revisadoEn} />
-
-  <Comprimido ficha={ficha} />
-
-  <dl class="tarjeta caracteristicas">
-    <dt>Forma</dt>
-    <dd>{esCapsula(ficha.formaFarmaceutica) ? 'Cápsula' : ETIQUETA_GEOMETRICA[ficha.formaGeometrica]}</dd>
-    <dt>Ranura</dt>
-    <dd>{ETIQUETA_RANURA[ficha.ranura]}</dd>
-    <dt>Forma farmacéutica</dt>
-    <dd>{ETIQUETA_FORMA[ficha.formaFarmaceutica]}</dd>
-    <dt>Liberación</dt>
-    <dd>{ETIQUETA_LIBERACION[ficha.liberacion]}</dd>
-  </dl>
-
-  <section class="tarjeta criterio" aria-labelledby="criterio-titulo">
-    <span class="codigo">Criterio {ficha.criterioCodigo}</span>
-    <h2 id="criterio-titulo">{ficha.criterioTitulo}</h2>
-    <p>{ficha.criterioFundamento}</p>
-    {ficha.notaVeredicto && <p class="nota"><strong>Nota:</strong> {ficha.notaVeredicto}</p>}
-    <a href={url(`/criterios/${ficha.criterioCodigo.toLowerCase()}/`)}>Más sobre este criterio</a>
-  </section>
-
-  <AvisoInformativo />
-
-  {otras.filter((o) => o.fichas.length > 0).map((o) => (
-    <section class="pila otras" aria-label={`Otras marcas con ${o.principio.dci}`}>
-      <h2>Otras marcas con {o.principio.dci}</h2>
-      <ul>
-        {o.fichas.slice(0, MAX_OTRAS).map((f) => (
-          <li>
-            <a href={url(`/medicamentos/${f.slug}/`)}>{f.nombreComercial}</a>
-            <EtiquetaVeredicto veredicto={f.veredicto} />
-          </li>
+  <div class="ficha">
+    <!-- En teléfono las columnas se deshacen (display: contents) y `order` mantiene la secuencia de la spec. -->
+    <div class="ficha-izq">
+      <nav class="migas o1" aria-label="Principio activo">
+        {ficha.principios.map((p, i) => (
+          <>{i > 0 && ' + '}<a href={url(`/dci/${p.slug}/`)}>{p.dci}</a></>
         ))}
-      </ul>
-      <a href={url(`/dci/${o.principio.slug}/`)}>Ver todas las marcas con {o.principio.dci}</a>
-    </section>
-  ))}
+      </nav>
 
-  <BloqueContacto />
+      <header class="encabezado o2">
+        <h1>{titulo}</h1>
+        <p class="apagado">{conc}{ficha.laboratorio && ` · ${ficha.laboratorio}`}</p>
+      </header>
 
-  <p><a href={`mailto:${CORREO_ERRORES}?subject=${asunto}`}>Reportar un error en esta ficha</a></p>
+      <div class="o3"><SelloVeredicto veredicto={ficha.veredicto} revisadoEn={ficha.revisadoEn} /></div>
+
+      <section class="tarjeta criterio o6" aria-labelledby="criterio-titulo">
+        <span class="codigo">Criterio {ficha.criterioCodigo}</span>
+        <h2 id="criterio-titulo">{ficha.criterioTitulo}</h2>
+        <p>{ficha.criterioFundamento}</p>
+        {ficha.notaVeredicto && <p class="nota"><strong>Nota:</strong> {ficha.notaVeredicto}</p>}
+        <a href={url(`/criterios/${ficha.criterioCodigo.toLowerCase()}/`)}>Más sobre este criterio</a>
+      </section>
+
+      <div class="o7"><AvisoInformativo /></div>
+    </div>
+
+    <aside class="ficha-der" aria-label="Características del comprimido">
+      <div class="o4"><Comprimido ficha={ficha} /></div>
+
+      <dl class="tarjeta caracteristicas o5">
+        <dt>Forma</dt>
+        <dd>{esCapsula(ficha.formaFarmaceutica) ? 'Cápsula' : ETIQUETA_GEOMETRICA[ficha.formaGeometrica]}</dd>
+        <dt>Ranura</dt>
+        <dd>{ETIQUETA_RANURA[ficha.ranura]}</dd>
+        <dt>Forma farmacéutica</dt>
+        <dd>{ETIQUETA_FORMA[ficha.formaFarmaceutica]}</dd>
+        <dt>Liberación</dt>
+        <dd>{ETIQUETA_LIBERACION[ficha.liberacion]}</dd>
+      </dl>
+
+      <div class="o9"><BloqueContacto /></div>
+    </aside>
+
+    <div class="ficha-abajo">
+      {otras.filter((o) => o.fichas.length > 0).map((o) => (
+        <section class="pila otras o8" aria-label={`Otras marcas con ${o.principio.dci}`}>
+          <h2>Otras marcas con {o.principio.dci}</h2>
+          <ul class="grilla">
+            {o.fichas.slice(0, MAX_OTRAS).map((f) => (
+              <li>
+                <a href={url(`/medicamentos/${f.slug}/`)}>{f.nombreComercial}</a>
+                <EtiquetaVeredicto veredicto={f.veredicto} />
+              </li>
+            ))}
+          </ul>
+          <a href={url(`/dci/${o.principio.slug}/`)}>Ver todas las marcas con {o.principio.dci}</a>
+        </section>
+      ))}
+
+      <p class="o10"><a href={`mailto:${CORREO_ERRORES}?subject=${asunto}`}>Reportar un error en esta ficha</a></p>
+    </div>
+  </div>
 </Base>
 
 <style>
+  .ficha { display: flex; flex-direction: column; gap: 16px; }
+  .ficha-izq, .ficha-der, .ficha-abajo { display: contents; }
+  .o1 { order: 1; } .o2 { order: 2; } .o3 { order: 3; } .o4 { order: 4; } .o5 { order: 5; }
+  .o6 { order: 6; } .o7 { order: 7; } .o8 { order: 8; } .o9 { order: 9; } .o10 { order: 10; }
+  @media (min-width: 960px) {
+    .ficha {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+      gap: 32px 48px;
+      align-items: start;
+    }
+    .ficha-izq, .ficha-der, .ficha-abajo { display: grid; gap: 20px; }
+    .ficha-abajo { grid-column: 1 / -1; }
+  }
+  /* La columna derecha acompaña al desplazarse solo si cabe entera en la pantalla. */
+  @media (min-width: 960px) and (min-height: 860px) {
+    .ficha-der { position: sticky; top: 24px; }
+  }
   .migas { font-weight: 700; color: var(--marca); }
   .encabezado { display: grid; gap: 6px; }
   .caracteristicas { margin: 0; padding: 6px 16px; display: grid; grid-template-columns: auto 1fr; }
@@ -101,7 +128,7 @@ const asunto = encodeURIComponent(`Error en ficha: ${ficha.nombreComercial} (${f
   .criterio { display: grid; gap: 8px; }
   .codigo { color: var(--marca); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; }
   .nota { background: var(--fondo); border-radius: 12px; padding: 10px 12px; }
-  .otras ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .otras ul { list-style: none; margin: 0; padding: 0; }
   .otras li {
     background: var(--tarjeta);
     border-radius: 16px;

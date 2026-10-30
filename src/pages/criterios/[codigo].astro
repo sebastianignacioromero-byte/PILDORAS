@@ -15,7 +15,7 @@ export async function getStaticPaths() {
 const { criterio } = Astro.props as { criterio: Criterio };
 const fichas = await fichasDeCriterio(criterio.codigo);
 ---
-<Base titulo={criterio.titulo} descripcion={criterio.fundamento}>
+<Base ancho="lectura" titulo={criterio.titulo} descripcion={criterio.fundamento}>
   <nav aria-label="Ruta"><a href={url('/criterios/')}>Criterios</a></nav>
   <span class="codigo">Criterio {criterio.codigo}</span>
   <h1>{criterio.titulo}</h1>

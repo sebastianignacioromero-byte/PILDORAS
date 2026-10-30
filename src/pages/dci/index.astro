@@ -17,6 +17,7 @@ for (const d of dcis) {
   <nav aria-label="Letras" class="letras">
     {[...grupos.keys()].map((l) => <a href={`#letra-${l}`}>{l}</a>)}
   </nav>
+  <div class="grilla">
   {[...grupos.entries()].map(([letra, lista]) => (
     <section class="tarjeta" aria-labelledby={`letra-${letra}`}>
       <h2 id={`letra-${letra}`}>{letra}</h2>
@@ -32,6 +33,7 @@ for (const d of dcis) {
       </ul>
     </section>
   ))}
+  </div>
 </Base>
 
 <style>

@@ -9,8 +9,10 @@ interface Props {
   descripcion: string;
   noindex?: boolean;
   jsonld?: object;
+  /** "lectura" limita el ancho para páginas de texto corrido. */
+  ancho?: 'completo' | 'lectura';
 }
-const { titulo, descripcion, noindex = false, jsonld } = Astro.props;
+const { titulo, descripcion, noindex = false, jsonld, ancho = 'completo' } = Astro.props;
 const canonica = new URL(Astro.url.pathname, Astro.site).href;
 const tituloCompleto = titulo === 'Píldoras' ? `Píldoras · ¿Se puede partir este comprimido?` : `${titulo} · Píldoras`;
 ---
@@ -48,8 +50,10 @@ const tituloCompleto = titulo === 'Píldoras' ? `Píldoras · ¿Se puede partir 
       </a>
       <span class="firma">Un proyecto de {CURIE_NOMBRE}<br />{QF_TITULO} {QF_NOMBRE}</span>
     </header>
-    <main id="contenido" class="contenedor pila principal">
-      <slot />
+    <main id="contenido" class="contenedor principal">
+      <div class:list={['pila', { lectura: ancho === 'lectura' }]}>
+        <slot />
+      </div>
     </main>
     <footer class="pie">
       <div class="contenedor pila">
@@ -111,7 +115,8 @@ const tituloCompleto = titulo === 'Píldoras' ? `Píldoras · ¿Se puede partir 
   }
   .marca svg { width: 32px; height: 32px; }
   .firma { font-size: 0.8rem; color: #4a6461; text-align: right; line-height: 1.25; }
-  .principal { padding-bottom: 40px; }
+  .principal { padding-bottom: 48px; }
+  @media (min-width: 960px) { .principal { padding-top: 12px; padding-bottom: 72px; } }
   .pie {
     background: var(--alveolo);
     color: var(--apagado);

@@ -13,10 +13,12 @@ const EXPLICACION = {
 } as const;
 ---
 <Base titulo="Píldoras" descripcion="¿Se puede partir este comprimido? Busque su medicamento por marca o principio activo. Información revisada por químico farmacéutico de Farmacias Curie.">
-  <h1>¿Se puede partir este comprimido?</h1>
-  <p class="bajada">Busque su medicamento y vea la forma del comprimido, si tiene ranura y si se puede partir.</p>
-
-  <Buscador enfocar />
+  <div class="portada">
+  <div class="pila principal-portada">
+    <h1>¿Se puede partir este comprimido?</h1>
+    <p class="bajada">Busque su medicamento y vea la forma del comprimido, si tiene ranura y si se puede partir.</p>
+    <Buscador enfocar />
+  </div>
 
   <section class="pila" aria-labelledby="veredictos-titulo">
     <h2 id="veredictos-titulo">Qué significa cada respuesta</h2>
@@ -30,11 +32,17 @@ const EXPLICACION = {
     </ul>
     <p><a href={url('/criterios/')}>Conozca los criterios que usamos</a> · <a href={url('/dci/')}>Ver todos los principios activos</a></p>
   </section>
+  </div>
 
   <AvisoInformativo />
 </Base>
 
 <style>
+  .portada { display: grid; gap: 28px; }
+  @media (min-width: 960px) {
+    .portada { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 56px; align-items: start; }
+    .principal-portada h1 { font-size: 3.2rem; }
+  }
   .bajada { font-size: 1.1rem; }
   .veredictos { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
   .veredictos li { display: grid; gap: 8px; justify-items: start; }

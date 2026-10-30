@@ -10,6 +10,7 @@ const criterios = await obtenerCriterios();
 <Base titulo="Criterios" descripcion="Los criterios farmacéuticos con que Píldoras decide si un comprimido se puede partir, no se debe partir o no se puede partir.">
   <h1>Criterios</h1>
   <p>Cada ficha se fundamenta en uno de estos criterios, definidos y revisados por un químico farmacéutico.</p>
+  <div class="columnas">
   {VALORES_VEREDICTO.map((v) => (
     <section class="pila" aria-label={v}>
       <EtiquetaVeredicto veredicto={v} />
@@ -23,9 +24,12 @@ const criterios = await obtenerCriterios();
       </ul>
     </section>
   ))}
+  </div>
 </Base>
 
 <style>
+  .columnas { display: grid; gap: 28px; align-items: start; }
+  @media (min-width: 960px) { .columnas { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   .lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
   .lista li { display: grid; gap: 2px; }
 </style>

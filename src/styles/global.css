@@ -42,7 +42,7 @@ h1, h2, h3 {
   line-height: 1.08;
   margin: 0;
 }
-h1 { font-size: clamp(1.8rem, 6vw, 2.6rem); }
+h1 { font-size: clamp(1.8rem, 4.5vw, 2.9rem); }
 h2 { font-size: 1.25rem; }
 h3 { font-size: 1.1rem; }
 
@@ -57,10 +57,20 @@ img, svg { max-width: 100%; }
 
 .contenedor {
   width: 100%;
-  max-width: 720px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0 16px;
 }
+@media (min-width: 600px) { .contenedor { padding: 0 24px; } }
+@media (min-width: 960px) { .contenedor { padding: 0 32px; } }
+
+/* Páginas de texto: líneas de largo cómodo aunque la pantalla sea ancha. */
+.lectura { max-width: 720px; }
+
+/* Grilla de tarjetas: 1 columna en teléfono, 2 en tablet, 3 en escritorio. */
+.grilla { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 600px) { .grilla { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 960px) { .grilla { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; } }
 
 .pila { display: grid; gap: 16px; }
 

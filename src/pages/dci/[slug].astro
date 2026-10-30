@@ -32,7 +32,7 @@ const descripcion = `${n} ${n === 1 ? 'marca' : 'marcas'} con ${dci.dci}: cuále
 
   <section aria-labelledby="marcas-titulo" class="pila">
     <h2 id="marcas-titulo">{n} {n === 1 ? 'marca' : 'marcas'} con {dci.dci}</h2>
-    <ul class="marcas">
+    <ul class="marcas grilla">
       {fichas.map((f) => (
         <li>
           <a class="marca-ficha" href={url(`/medicamentos/${f.slug}/`)}>
@@ -48,14 +48,20 @@ const descripcion = `${n} ${n === 1 ? 'marca' : 'marcas'} con ${dci.dci}: cuále
     </ul>
   </section>
 
-  <AvisoInformativo />
-  <BloqueContacto />
+  <div class="cierre">
+    <AvisoInformativo />
+    <BloqueContacto />
+  </div>
 </Base>
 
 <style>
   .migas { font-weight: 700; }
-  .resumen { font-size: 1.05rem; }
-  .marcas { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .resumen { font-size: 1.05rem; max-width: 760px; }
+  .apagado { max-width: 760px; }
+  .cierre { display: grid; gap: 20px; align-items: start; }
+  @media (min-width: 960px) { .cierre { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; } }
+  .marcas { list-style: none; margin: 0; padding: 0; }
+  .marcas > li { display: grid; }
   .marca-ficha {
     display: grid;
     grid-template-columns: 76px minmax(0, 1fr);
