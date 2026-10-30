@@ -23,6 +23,8 @@
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",
+    "exceljs": "^4.4.0",
+    "tsx": "^4.23.15",
     "typescript": "^7.0.2",
     "vitest": "^5.0.5"
   }
