@@ -1,0 +1,41 @@
+---
+import Base from '../../layouts/Base.astro';
+import { obtenerDcis } from '../../lib/datos';
+import { normalizar } from '../../lib/normalizar';
+import { url } from '../../lib/url';
+
+const dcis = await obtenerDcis();
+const grupos = new Map<string, typeof dcis>();
+for (const d of dcis) {
+  const letra = normalizar(d.dci).charAt(0).toUpperCase();
+  grupos.set(letra, [...(grupos.get(letra) ?? []), d]);
+}
+---
+<Base titulo="Principios activos" descripcion="Índice alfabético de los principios activos (DCI) con marcas revisadas en Píldoras.">
+  <h1>Principios activos</h1>
+  <p class="apagado">Elija el principio activo para ver sus marcas y si se pueden partir.</p>
+  <nav aria-label="Letras" class="letras">
+    {[...grupos.keys()].map((l) => <a href={`#letra-${l}`}>{l}</a>)}
+  </nav>
+  {[...grupos.entries()].map(([letra, lista]) => (
+    <section class="tarjeta" aria-labelledby={`letra-${letra}`}>
+      <h2 id={`letra-${letra}`}>{letra}</h2>
+      <ul>
+        {lista.map((d) => {
+          const n = d.nSePuede + d.nNoDebe + d.nNoPuede;
+          return (
+            <li>
+              <a href={url(`/dci/${d.slug}/`)}>{d.dci}</a> <span class="apagado chico">({n} {n === 1 ? 'marca' : 'marcas'})</span>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  ))}
+</Base>
+
+<style>
+  .letras { display: flex; flex-wrap: wrap; gap: 8px; }
+  .letras a { background: var(--tarjeta); border-radius: 10px; padding: 6px 12px; text-decoration: none; box-shadow: var(--sombra-tarjeta); }
+  ul { margin: 8px 0 0; padding-left: 20px; display: grid; gap: 6px; }
+</style>

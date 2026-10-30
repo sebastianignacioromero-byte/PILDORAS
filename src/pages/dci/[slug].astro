@@ -1,0 +1,75 @@
+---
+import Base from '../../layouts/Base.astro';
+import Comprimido from '../../components/Comprimido.astro';
+import EtiquetaVeredicto from '../../components/EtiquetaVeredicto.astro';
+import AvisoInformativo from '../../components/AvisoInformativo.astro';
+import BloqueContacto from '../../components/BloqueContacto.astro';
+import { fichasDeDci, obtenerDcis } from '../../lib/datos';
+import { concentracion } from '../../lib/textos';
+import { jsonldDci } from '../../lib/jsonld';
+import { url } from '../../lib/url';
+import type { Dci } from '../../tipos';
+
+export async function getStaticPaths() {
+  const dcis = await obtenerDcis();
+  return dcis.map((dci) => ({ params: { slug: dci.slug }, props: { dci } }));
+}
+
+const { dci } = Astro.props as { dci: Dci };
+const fichas = await fichasDeDci(dci.slug);
+const canonica = new URL(Astro.url.pathname, Astro.site).href;
+const n = fichas.length;
+const nombre = dci.dci.toLocaleLowerCase('es');
+const descripcion = `${n} ${n === 1 ? 'marca' : 'marcas'} con ${dci.dci}: cuáles se pueden partir, cuáles no se deben partir y por qué. Revisado por químico farmacéutico.`;
+---
+<Base titulo={`¿Se puede partir el ${nombre}?`} descripcion={descripcion} noindex={!dci.resumen} jsonld={jsonldDci(dci, canonica)}>
+  <nav class="migas" aria-label="Ruta"><a href={url('/dci/')}>Principios activos</a></nav>
+  <h1>¿Se puede partir el {nombre}?</h1>
+  {dci.resumen && <p class="resumen">{dci.resumen}</p>}
+  <p class="apagado">
+    Depende de la marca: la forma del comprimido cambia según el laboratorio. Elija la suya.
+  </p>
+
+  <section aria-labelledby="marcas-titulo" class="pila">
+    <h2 id="marcas-titulo">{n} {n === 1 ? 'marca' : 'marcas'} con {dci.dci}</h2>
+    <ul class="marcas">
+      {fichas.map((f) => (
+        <li>
+          <a class="marca-ficha" href={url(`/medicamentos/${f.slug}/`)}>
+            <Comprimido ficha={f} tamano="chico" />
+            <span class="datos">
+              <strong>{f.nombreComercial}</strong>
+              <span class="apagado chico">{concentracion(f)}{f.laboratorio && ` · ${f.laboratorio}`}</span>
+              <EtiquetaVeredicto veredicto={f.veredicto} />
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <AvisoInformativo />
+  <BloqueContacto />
+</Base>
+
+<style>
+  .migas { font-weight: 700; }
+  .resumen { font-size: 1.05rem; }
+  .marcas { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .marca-ficha {
+    display: grid;
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 14px;
+    align-items: center;
+    background: var(--tarjeta);
+    border-radius: var(--radio);
+    padding: 12px 14px;
+    box-shadow: var(--sombra-tarjeta);
+    text-decoration: none;
+    color: var(--tinta);
+    font-weight: 400;
+  }
+  .marca-ficha:hover strong { text-decoration: underline; }
+  .datos { display: grid; gap: 4px; justify-items: start; }
+  .datos strong { font-size: 1.1rem; color: var(--marca); }
+</style>

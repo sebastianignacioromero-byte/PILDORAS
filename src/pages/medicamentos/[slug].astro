@@ -1,0 +1,115 @@
+---
+import Base from '../../layouts/Base.astro';
+import SelloVeredicto from '../../components/SelloVeredicto.astro';
+import Comprimido from '../../components/Comprimido.astro';
+import EtiquetaVeredicto from '../../components/EtiquetaVeredicto.astro';
+import AvisoInformativo from '../../components/AvisoInformativo.astro';
+import BloqueContacto from '../../components/BloqueContacto.astro';
+import { fichasDeDci, obtenerFichas } from '../../lib/datos';
+import { ETIQUETA_FORMA, ETIQUETA_GEOMETRICA, ETIQUETA_LIBERACION, ETIQUETA_RANURA, VEREDICTOS, concentracion } from '../../lib/textos';
+import { esCapsula } from '../../lib/comprimido';
+import { jsonldFicha } from '../../lib/jsonld';
+import { url } from '../../lib/url';
+import { CORREO_ERRORES } from '../../config';
+import type { Ficha } from '../../tipos';
+
+export async function getStaticPaths() {
+  const fichas = await obtenerFichas();
+  return fichas.map((ficha) => ({ params: { slug: ficha.slug }, props: { ficha } }));
+}
+
+const { ficha } = Astro.props as { ficha: Ficha };
+const conc = concentracion(ficha);
+const t = VEREDICTOS[ficha.veredicto];
+const descripcion = ficha.metaDescripcion ?? `${t.sello}. ${ficha.criterioTitulo}. Información revisada por químico farmacéutico.`;
+const canonica = new URL(Astro.url.pathname, Astro.site).href;
+
+const MAX_OTRAS = 8;
+const otras = await Promise.all(
+  ficha.principios.map(async (p) => ({
+    principio: p,
+    fichas: (await fichasDeDci(p.slug)).filter((f) => f.slug !== ficha.slug),
+  })),
+);
+const asunto = encodeURIComponent(`Error en ficha: ${ficha.nombreComercial} (${ficha.slug})`);
+---
+<Base titulo={`¿Se puede partir ${ficha.nombreComercial}?`} descripcion={descripcion} jsonld={jsonldFicha(ficha, canonica)}>
+  <nav class="migas" aria-label="Principio activo">
+    {ficha.principios.map((p, i) => (
+      <>{i > 0 && ' + '}<a href={url(`/dci/${p.slug}/`)}>{p.dci}</a></>
+    ))}
+  </nav>
+
+  <header class="encabezado">
+    <h1>¿Se puede partir {ficha.nombreComercial}?</h1>
+    <p class="apagado">{conc}{ficha.laboratorio && ` · ${ficha.laboratorio}`}</p>
+  </header>
+
+  <SelloVeredicto veredicto={ficha.veredicto} revisadoEn={ficha.revisadoEn} />
+
+  <Comprimido ficha={ficha} />
+
+  <dl class="tarjeta caracteristicas">
+    <dt>Forma</dt>
+    <dd>{esCapsula(ficha.formaFarmaceutica) ? 'Cápsula' : ETIQUETA_GEOMETRICA[ficha.formaGeometrica]}</dd>
+    <dt>Ranura</dt>
+    <dd>{ETIQUETA_RANURA[ficha.ranura]}</dd>
+    <dt>Forma farmacéutica</dt>
+    <dd>{ETIQUETA_FORMA[ficha.formaFarmaceutica]}</dd>
+    <dt>Liberación</dt>
+    <dd>{ETIQUETA_LIBERACION[ficha.liberacion]}</dd>
+  </dl>
+
+  <section class="tarjeta criterio" aria-labelledby="criterio-titulo">
+    <span class="codigo">Criterio {ficha.criterioCodigo}</span>
+    <h2 id="criterio-titulo">{ficha.criterioTitulo}</h2>
+    <p>{ficha.criterioFundamento}</p>
+    {ficha.notaVeredicto && <p class="nota"><strong>Nota:</strong> {ficha.notaVeredicto}</p>}
+    <a href={url(`/criterios/${ficha.criterioCodigo.toLowerCase()}/`)}>Más sobre este criterio</a>
+  </section>
+
+  <AvisoInformativo />
+
+  {otras.filter((o) => o.fichas.length > 0).map((o) => (
+    <section class="pila otras" aria-label={`Otras marcas con ${o.principio.dci}`}>
+      <h2>Otras marcas con {o.principio.dci}</h2>
+      <ul>
+        {o.fichas.slice(0, MAX_OTRAS).map((f) => (
+          <li>
+            <a href={url(`/medicamentos/${f.slug}/`)}>{f.nombreComercial}</a>
+            <EtiquetaVeredicto veredicto={f.veredicto} />
+          </li>
+        ))}
+      </ul>
+      <a href={url(`/dci/${o.principio.slug}/`)}>Ver todas las marcas con {o.principio.dci}</a>
+    </section>
+  ))}
+
+  <BloqueContacto />
+
+  <p><a href={`mailto:${CORREO_ERRORES}?subject=${asunto}`}>Reportar un error en esta ficha</a></p>
+</Base>
+
+<style>
+  .migas { font-weight: 700; color: var(--marca); }
+  .encabezado { display: grid; gap: 6px; }
+  .caracteristicas { margin: 0; padding: 6px 16px; display: grid; grid-template-columns: auto 1fr; }
+  .caracteristicas dt, .caracteristicas dd { padding: 11px 0; margin: 0; border-bottom: 1px solid var(--linea); }
+  .caracteristicas dt { color: var(--apagado); padding-right: 16px; }
+  .caracteristicas dd { font-weight: 700; text-align: right; }
+  .caracteristicas dt:last-of-type, .caracteristicas dd:last-of-type { border-bottom: 0; }
+  .criterio { display: grid; gap: 8px; }
+  .codigo { color: var(--marca); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; }
+  .nota { background: var(--fondo); border-radius: 12px; padding: 10px 12px; }
+  .otras ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .otras li {
+    background: var(--tarjeta);
+    border-radius: 16px;
+    padding: 12px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+</style>

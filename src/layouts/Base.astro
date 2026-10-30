@@ -1,0 +1,122 @@
+---
+import '../styles/global.css';
+import { CURIE_NOMBRE, CURIE_URL } from '../config';
+import { esEjemplo } from '../lib/datos';
+import { url } from '../lib/url';
+
+interface Props {
+  titulo: string;
+  descripcion: string;
+  noindex?: boolean;
+  jsonld?: object;
+}
+const { titulo, descripcion, noindex = false, jsonld } = Astro.props;
+const canonica = new URL(Astro.url.pathname, Astro.site).href;
+const tituloCompleto = titulo === 'Píldoras' ? `Píldoras · ¿Se puede partir este comprimido?` : `${titulo} · Píldoras`;
+---
+<!doctype html>
+<html lang="es-CL">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{tituloCompleto}</title>
+    <meta name="description" content={descripcion} />
+    <link rel="canonical" href={canonica} />
+    {(noindex || esEjemplo) && <meta name="robots" content="noindex" />}
+    <meta property="og:title" content={tituloCompleto} />
+    <meta property="og:description" content={descripcion} />
+    <meta property="og:url" content={canonica} />
+    <meta property="og:locale" content="es_CL" />
+    <meta name="theme-color" content="#f3f7f6" />
+    <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+    <link rel="sitemap" href={url('/sitemap-index.xml')} />
+    {jsonld && <script type="application/ld+json" set:html={JSON.stringify(jsonld)} />}
+  </head>
+  <body>
+    <a class="saltar" href="#contenido">Saltar al contenido</a>
+    {
+      esEjemplo && (
+        <p class="franja-ejemplo" role="note">
+          Datos de ejemplo: los medicamentos de este sitio son ficticios y sirven solo para revisar el diseño.
+        </p>
+      )
+    }
+    <header class="cabecera contenedor">
+      <a class="marca" href={url('/')}>
+        <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="14" rx="7" fill="#d9f1ea" stroke="#0b6f68" stroke-width="2.2" /><line x1="16" y1="9" x2="16" y2="23" stroke="#0b6f68" stroke-width="2.2" /></svg>
+        Píldoras
+      </a>
+      <span class="firma">Un proyecto de<br />{CURIE_NOMBRE}</span>
+    </header>
+    <main id="contenido" class="contenedor pila principal">
+      <slot />
+    </main>
+    <footer class="pie">
+      <div class="contenedor pila">
+        <nav aria-label="Pie de página">
+          <ul>
+            <li><a href={url('/dci/')}>Principios activos</a></li>
+            <li><a href={url('/criterios/')}>Criterios</a></li>
+            <li><a href={url('/sobre-el-proyecto/')}>Sobre el proyecto</a></li>
+            <li><a href={url('/contacto/')}>Contacto</a></li>
+            <li><a href={url('/aviso-legal/')}>Aviso legal</a></li>
+            <li><a href={url('/privacidad/')}>Privacidad</a></li>
+          </ul>
+        </nav>
+        <p>Píldoras · Un proyecto de <a href={CURIE_URL} rel="noopener">{CURIE_NOMBRE}</a>, Viña del Mar.</p>
+        <p>Información de apoyo. No reemplaza la indicación de su médico o químico farmacéutico.</p>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style>
+  .saltar {
+    position: absolute;
+    left: -9999px;
+    top: 8px;
+    background: var(--tinta);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 8px;
+    z-index: 10;
+  }
+  .saltar:focus { left: 8px; }
+  .franja-ejemplo {
+    background: #fff4d6;
+    color: #5a4200;
+    font-size: 0.85rem;
+    text-align: center;
+    padding: 8px 16px;
+    font-weight: 700;
+  }
+  .cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding-top: 18px;
+    padding-bottom: 18px;
+  }
+  .marca {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--titulos);
+    font-weight: 800;
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+    color: var(--marca);
+    text-decoration: none;
+  }
+  .marca svg { width: 32px; height: 32px; }
+  .firma { font-size: 0.8rem; color: #4a6461; text-align: right; line-height: 1.25; }
+  .principal { padding-bottom: 40px; }
+  .pie {
+    background: var(--alveolo);
+    color: var(--apagado);
+    font-size: 0.85rem;
+    padding: 24px 0 32px;
+  }
+  .pie ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 18px; }
+</style>
