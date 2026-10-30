@@ -1,0 +1,25 @@
+---
+import Base from '../layouts/Base.astro';
+import TextoProvisional from '../components/TextoProvisional.astro';
+import { CURIE_NOMBRE, QF_NOMBRE } from '../config';
+import { url } from '../lib/url';
+---
+<Base titulo="Sobre el proyecto" descripcion="Quién hace Píldoras, cómo se revisa cada ficha y cómo se decide si un comprimido se puede partir.">
+  <h1>Sobre el proyecto</h1>
+  <TextoProvisional />
+  <p>
+    Píldoras es una web informativa para pacientes, hecha por {CURIE_NOMBRE}. Responde una pregunta frecuente en
+    el mesón de la farmacia: ¿se puede partir este comprimido?
+  </p>
+  <h2>Cómo se decide</h2>
+  <p>
+    Cada ficha corresponde a una marca, porque la forma del comprimido cambia según el laboratorio. Un químico
+    farmacéutico ({QF_NOMBRE}) revisa la ficha y le asigna una de tres respuestas: se puede partir, no se debe partir
+    o no se puede partir. Cada respuesta se fundamenta en un <a href={url('/criterios/')}>criterio</a> estandarizado.
+  </p>
+  <h2>Qué no es</h2>
+  <p>
+    No reemplaza la indicación de su médico ni la orientación de su químico farmacéutico. Los dibujos son ilustrativos
+    y no muestran el tamaño real del comprimido.
+  </p>
+</Base>

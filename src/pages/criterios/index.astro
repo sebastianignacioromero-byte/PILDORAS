@@ -1,0 +1,31 @@
+---
+import Base from '../../layouts/Base.astro';
+import EtiquetaVeredicto from '../../components/EtiquetaVeredicto.astro';
+import { obtenerCriterios } from '../../lib/datos';
+import { VALORES_VEREDICTO } from '../../tipos';
+import { url } from '../../lib/url';
+
+const criterios = await obtenerCriterios();
+---
+<Base titulo="Criterios" descripcion="Los criterios farmacéuticos con que Píldoras decide si un comprimido se puede partir, no se debe partir o no se puede partir.">
+  <h1>Criterios</h1>
+  <p>Cada ficha se fundamenta en uno de estos criterios, definidos y revisados por un químico farmacéutico.</p>
+  {VALORES_VEREDICTO.map((v) => (
+    <section class="pila" aria-label={v}>
+      <EtiquetaVeredicto veredicto={v} />
+      <ul class="lista">
+        {criterios.filter((c) => c.veredicto === v).map((c) => (
+          <li class="tarjeta">
+            <a href={url(`/criterios/${c.codigo.toLowerCase()}/`)}>{c.titulo}</a>
+            <span class="apagado chico">{c.codigo}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))}
+</Base>
+
+<style>
+  .lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .lista li { display: grid; gap: 2px; }
+</style>

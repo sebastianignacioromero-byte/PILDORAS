@@ -1,0 +1,47 @@
+---
+import Base from '../../layouts/Base.astro';
+import EtiquetaVeredicto from '../../components/EtiquetaVeredicto.astro';
+import AvisoInformativo from '../../components/AvisoInformativo.astro';
+import { fichasDeCriterio, obtenerCriterios } from '../../lib/datos';
+import { concentracion } from '../../lib/textos';
+import { url } from '../../lib/url';
+import type { Criterio } from '../../tipos';
+
+export async function getStaticPaths() {
+  const criterios = await obtenerCriterios();
+  return criterios.map((criterio) => ({ params: { codigo: criterio.codigo.toLowerCase() }, props: { criterio } }));
+}
+
+const { criterio } = Astro.props as { criterio: Criterio };
+const fichas = await fichasDeCriterio(criterio.codigo);
+---
+<Base titulo={criterio.titulo} descripcion={criterio.fundamento}>
+  <nav aria-label="Ruta"><a href={url('/criterios/')}>Criterios</a></nav>
+  <span class="codigo">Criterio {criterio.codigo}</span>
+  <h1>{criterio.titulo}</h1>
+  <EtiquetaVeredicto veredicto={criterio.veredicto} />
+  <p class="fundamento">{criterio.fundamento}</p>
+
+  {fichas.length > 0 && (
+    <section class="pila" aria-labelledby="fichas-titulo">
+      <h2 id="fichas-titulo">Marcas con este criterio</h2>
+      <ul class="lista">
+        {fichas.map((f) => (
+          <li class="tarjeta">
+            <a href={url(`/medicamentos/${f.slug}/`)}>{f.nombreComercial}</a>
+            <span class="apagado chico">{concentracion(f)}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  <AvisoInformativo />
+</Base>
+
+<style>
+  .codigo { color: var(--marca); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; }
+  .fundamento { font-size: 1.05rem; }
+  .lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .lista li { display: grid; gap: 2px; }
+</style>

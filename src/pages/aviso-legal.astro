@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+import TextoProvisional from '../components/TextoProvisional.astro';
+import { CURIE_NOMBRE } from '../config';
+---
+<Base titulo="Aviso legal" descripcion="Condiciones de uso de la información publicada en Píldoras.">
+  <h1>Aviso legal</h1>
+  <TextoProvisional />
+  <p>
+    La información de Píldoras es de apoyo y de carácter general. No constituye una indicación médica ni farmacéutica
+    y no reemplaza la consulta con un profesional de la salud.
+  </p>
+  <p>
+    No parta, triture ni cambie la dosis de un medicamento sin indicación de su médico o químico farmacéutico. Ante
+    cualquier duda sobre su tratamiento, consulte a un profesional.
+  </p>
+  <p>
+    Las imágenes de los comprimidos son representaciones ilustrativas, no a escala. {CURIE_NOMBRE} revisa la
+    información con cuidado, pero puede contener errores: si encuentra uno, repórtelo desde la ficha correspondiente.
+  </p>
+</Base>

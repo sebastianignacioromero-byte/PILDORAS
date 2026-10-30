@@ -1,7 +1,41 @@
 ---
-import '../styles/global.css';
+import Base from '../layouts/Base.astro';
+import Buscador from '../components/Buscador.astro';
+import EtiquetaVeredicto from '../components/EtiquetaVeredicto.astro';
+import AvisoInformativo from '../components/AvisoInformativo.astro';
+import { VALORES_VEREDICTO } from '../tipos';
+import { url } from '../lib/url';
+
+const EXPLICACION = {
+  se_puede_partir: 'El comprimido puede dividirse sin alterar cómo actúa. Hágalo solo si le indicaron media dosis.',
+  no_debe_partir: 'Por una razón farmacéutica: partirlo cambia cómo se libera el medicamento, le quita su protección o altera la dosis.',
+  no_puede_partir: 'Por su forma: una cápsula u otra presentación que no se puede dividir.',
+} as const;
 ---
-<html lang="es-CL">
-  <head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Píldoras</title></head>
-  <body><main class="contenedor"><h1>Píldoras</h1></main></body>
-</html>
+<Base titulo="Píldoras" descripcion="¿Se puede partir este comprimido? Busque su medicamento por marca o principio activo. Información revisada por químico farmacéutico de Farmacias Curie.">
+  <h1>¿Se puede partir este comprimido?</h1>
+  <p class="bajada">Busque su medicamento y vea la forma del comprimido, si tiene ranura y si se puede partir.</p>
+
+  <Buscador enfocar />
+
+  <section class="pila" aria-labelledby="veredictos-titulo">
+    <h2 id="veredictos-titulo">Qué significa cada respuesta</h2>
+    <ul class="veredictos">
+      {VALORES_VEREDICTO.map((v) => (
+        <li class="tarjeta">
+          <EtiquetaVeredicto veredicto={v} />
+          <p>{EXPLICACION[v]}</p>
+        </li>
+      ))}
+    </ul>
+    <p><a href={url('/criterios/')}>Conozca los criterios que usamos</a> · <a href={url('/dci/')}>Ver todos los principios activos</a></p>
+  </section>
+
+  <AvisoInformativo />
+</Base>
+
+<style>
+  .bajada { font-size: 1.1rem; }
+  .veredictos { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .veredictos li { display: grid; gap: 8px; justify-items: start; }
+</style>

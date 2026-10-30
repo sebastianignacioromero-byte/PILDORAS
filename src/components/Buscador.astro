@@ -1,0 +1,205 @@
+---
+// Buscador por marca o principio activo. Sin JavaScript, el formulario lleva al índice de DCI.
+// Con Supabase configurado consulta buscar_medicamentos; si no, busca en las fichas de ejemplo.
+import { aResultado } from '../lib/buscar';
+import { obtenerFichas } from '../lib/datos';
+import { url } from '../lib/url';
+import Icono from './Icono.astro';
+
+interface Props {
+  enfocar?: boolean;
+}
+const { enfocar = false } = Astro.props;
+const conSupabase = Boolean(import.meta.env.PUBLIC_SUPABASE_URL && import.meta.env.PUBLIC_SUPABASE_ANON_KEY);
+const locales = conSupabase ? [] : (await obtenerFichas()).map(aResultado);
+---
+<div class="buscador" data-locales={conSupabase ? undefined : JSON.stringify(locales)}>
+  <form action={url('/dci/')} method="get" role="search">
+    <label for="consulta">Busque por marca o principio activo</label>
+    <div class="campo">
+      <Icono nombre="buscar" class="lupa" />
+      <input
+        id="consulta"
+        name="q"
+        type="search"
+        autocomplete="off"
+        spellcheck="false"
+        placeholder="Ej.: losartán o Losarvit"
+        aria-describedby="estado-busqueda"
+        aria-controls="resultados-busqueda"
+        autofocus={enfocar}
+      />
+    </div>
+  </form>
+  <p id="estado-busqueda" class="estado" aria-live="polite"></p>
+  <ul id="resultados-busqueda" class="resultados" aria-label="Resultados de la búsqueda"></ul>
+</div>
+
+<script>
+  import { crearBuscadorLocal, dcisDeResultados, debeBuscar, ErrorBusqueda, type Buscador, type ResultadoBusqueda } from '../lib/buscar';
+  import { svgComprimido } from '../lib/comprimido';
+  import { ICONOS } from '../lib/iconos';
+  import { VEREDICTOS, concentracion } from '../lib/textos';
+  import { url } from '../lib/url';
+
+  const ESPERA_MS = 250;
+
+  const escapar = (t: string) =>
+    t.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
+
+  async function crearBuscador(raiz: HTMLElement): Promise<Buscador> {
+    const urlSupabase = import.meta.env.PUBLIC_SUPABASE_URL;
+    const clave = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+    if (urlSupabase && clave) {
+      const { crearBuscadorSupabase } = await import('../lib/buscar-supabase');
+      return crearBuscadorSupabase(urlSupabase, clave);
+    }
+    return crearBuscadorLocal(JSON.parse(raiz.dataset.locales ?? '[]') as ResultadoBusqueda[]);
+  }
+
+  function itemDci(p: { dci: string; slug: string }): string {
+    return `<li><a class="resultado dci" href="${url(`/dci/${p.slug}/`)}">
+      <span class="tipo">Principio activo</span><strong>${escapar(p.dci)}</strong>
+      <span class="apagado chico">Ver todas sus marcas</span></a></li>`;
+  }
+
+  function itemMarca(r: ResultadoBusqueda): string {
+    const v = VEREDICTOS[r.veredicto];
+    const dibujo = svgComprimido({ forma: r.formaGeometrica, ranura: r.ranura, orientacion: 0, formaFarmaceutica: r.formaFarmaceutica });
+    const lab = r.laboratorio ? ` · ${escapar(r.laboratorio)}` : '';
+    return `<li><a class="resultado marca" href="${url(`/medicamentos/${r.slug}/`)}">
+      <span class="mini">${dibujo}</span>
+      <span class="datos"><strong>${escapar(r.nombreComercial)}</strong>
+        <span class="apagado chico">${escapar(concentracion(r))}${lab}</span>
+        <span class="etiqueta" style="background:${v.color}">${ICONOS[v.icono]}${v.etiqueta}</span></span></a></li>`;
+  }
+
+  async function iniciar(raiz: HTMLElement) {
+    const entrada = raiz.querySelector<HTMLInputElement>('input')!;
+    const estado = raiz.querySelector<HTMLElement>('.estado')!;
+    const lista = raiz.querySelector<HTMLUListElement>('.resultados')!;
+    const buscador = await crearBuscador(raiz);
+    let temporizador: number | undefined;
+    let turno = 0;
+
+    const mostrar = (mensaje: string, html = '') => {
+      estado.innerHTML = mensaje;
+      lista.innerHTML = html;
+    };
+
+    async function ejecutar() {
+      const q = entrada.value;
+      const mio = ++turno;
+      if (!debeBuscar(q)) return mostrar('');
+      mostrar('Buscando…');
+      try {
+        const resultados = await buscador.buscar(q);
+        if (mio !== turno) return;
+        if (resultados.length === 0) {
+          return mostrar(`No encontramos ese medicamento. <a href="${url('/contacto/')}">Consúltenos</a> o revise cómo lo escribió.`);
+        }
+        const dcis = dcisDeResultados(resultados, q);
+        const n = resultados.length;
+        mostrar(`${n} ${n === 1 ? 'resultado' : 'resultados'}`, dcis.map(itemDci).join('') + resultados.map(itemMarca).join(''));
+      } catch (e) {
+        if (mio !== turno) return;
+        if (!(e instanceof ErrorBusqueda)) console.error(e);
+        mostrar(`La búsqueda no está disponible en este momento. Puede revisar los <a href="${url('/criterios/')}">criterios</a> o el <a href="${url('/dci/')}">índice de principios activos</a>.`);
+      }
+    }
+
+    entrada.addEventListener('input', () => {
+      window.clearTimeout(temporizador);
+      temporizador = window.setTimeout(ejecutar, ESPERA_MS);
+    });
+    raiz.querySelector('form')!.addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      window.clearTimeout(temporizador);
+      const primero = lista.querySelector<HTMLAnchorElement>('a');
+      if (primero && debeBuscar(entrada.value)) primero.click();
+      else ejecutar();
+    });
+
+    // Flechas: del campo al primer resultado y entre resultados.
+    raiz.addEventListener('keydown', (ev) => {
+      if (ev.key !== 'ArrowDown' && ev.key !== 'ArrowUp') return;
+      const enlaces = [...lista.querySelectorAll<HTMLAnchorElement>('a.resultado')];
+      if (enlaces.length === 0) return;
+      const actual = enlaces.indexOf(document.activeElement as HTMLAnchorElement);
+      ev.preventDefault();
+      if (ev.key === 'ArrowDown') enlaces[Math.min(actual + 1, enlaces.length - 1)].focus();
+      else if (actual <= 0) entrada.focus();
+      else enlaces[actual - 1].focus();
+    });
+
+    if (entrada.value) ejecutar();
+  }
+
+  document.querySelectorAll<HTMLElement>('.buscador').forEach((raiz) => void iniciar(raiz));
+</script>
+
+<style>
+  .buscador { display: grid; gap: 10px; }
+  label { font-weight: 700; }
+  .campo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--tarjeta);
+    border-radius: var(--radio);
+    padding: 4px 16px;
+    box-shadow: var(--sombra-tarjeta);
+    border: 2px solid transparent;
+  }
+  .campo:focus-within { border-color: var(--marca); }
+  .campo :global(.lupa svg) { width: 22px; height: 22px; color: var(--marca); }
+  input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 1.1rem;
+    padding: 12px 0;
+    color: var(--tinta);
+  }
+  input:focus { outline: none; }
+  .estado { font-size: 0.9rem; color: var(--apagado); min-height: 1.4em; }
+  .resultados { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .resultados :global(.resultado) {
+    display: grid;
+    gap: 4px;
+    background: var(--tarjeta);
+    border-radius: var(--radio);
+    padding: 12px 14px;
+    box-shadow: var(--sombra-tarjeta);
+    text-decoration: none;
+    color: var(--tinta);
+    font-weight: 400;
+  }
+  .resultados :global(.resultado strong) { color: var(--marca); font-size: 1.1rem; }
+  .resultados :global(.resultado.dci) { border-left: 6px solid var(--marca); }
+  .resultados :global(.tipo) { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--apagado); }
+  .resultados :global(.resultado.marca) { grid-template-columns: 64px minmax(0, 1fr); gap: 12px; align-items: center; }
+  .resultados :global(.mini) {
+    background: var(--alveolo);
+    border-radius: 16px;
+    padding: 8px 6px;
+    box-shadow: inset 0 2px 4px #0b6f6826;
+    display: grid;
+  }
+  .resultados :global(.mini svg) { width: 100%; height: auto; }
+  .resultados :global(.datos) { display: grid; gap: 4px; justify-items: start; }
+  .resultados :global(.etiqueta) {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 700;
+    line-height: 1;
+    padding: 6px 10px;
+    border-radius: 10px;
+  }
+  .resultados :global(.etiqueta svg) { width: 14px; height: 14px; }
+</style>
