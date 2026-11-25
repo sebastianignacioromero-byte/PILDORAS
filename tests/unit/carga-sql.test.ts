@@ -49,6 +49,11 @@ describe('generarSql', () => {
     expect(sql).toContain("'Laboratorio Chile'");
     expect(sql).not.toContain("'OPK'");
   });
+  it('no sobrescribe fichas editadas en el panel ni sus principios', () => {
+    expect(sql).toMatch(/on conflict \(slug\) do update set[\s\S]*where not public\.medicamentos\.editada_en_panel;/);
+    expect(sql).toMatch(/delete from public\.medicamento_principios[\s\S]*not editada_en_panel/);
+    expect(sql).toMatch(/join public\.medicamentos m on m\.slug = d\.ficha and not m\.editada_en_panel/);
+  });
   it('no despublica fichas que el QF ya publicó', () => {
     expect(sql).toMatch(/when public\.medicamentos\.estado = 'publicado' then 'publicado'/);
   });

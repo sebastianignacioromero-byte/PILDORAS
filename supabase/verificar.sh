@@ -84,6 +84,11 @@ select guardar_ficha(jsonb_build_object('id', (select id from medicamentos where
 select 'panel_sin_cambios=' || forma_geometrica || '|' || nombre_comercial from medicamentos where slug = 'losarvit-50-1';
 SQL
 
+# Una carga del stock posterior no toca la ficha editada en el panel.
+$PSQL -t -A -c "alter table auth.users add column if not exists email text" -c "insert into auth.users (id, email) values ('00000000-0000-0000-0000-0000000000aa', 'qf@ejemplo.cl') on conflict (id) do update set email = excluded.email" >/dev/null
+$PSQL -f "$DIR/prueba-carga-sobre-panel.sql" >/dev/null
+$PSQL -t -A -c "select 'panel_tras_carga=' || forma_geometrica || '|' || laboratorio || '|' || (select count(*) from medicamento_principios mp where mp.medicamento_id = m.id) from medicamentos m where slug = 'losarvit-50-1'"
+
 # Reportes: el público (anon) puede crear reportes pero no leerlos.
 $PSQL -f "$DIR/migracion_reportes.sql"
 $PSQL -f "$DIR/migracion_reportes.sql"
@@ -100,9 +105,6 @@ SQL
 # Carga masiva opcional: se ejecuta dos veces para comprobar que no duplica.
 if [ -n "${1:-}" ]; then
   $PSQL -f "$DIR/migracion_carga.sql"
-  $PSQL -c "insert into auth.users values ('00000000-0000-0000-0000-0000000000aa')" >/dev/null
-  $PSQL -c "alter table auth.users add column if not exists email text" >/dev/null
-  $PSQL -c "update auth.users set email = 'qf@ejemplo.cl' where id = '00000000-0000-0000-0000-0000000000aa'" >/dev/null
   $PSQL -f "$1"
   $PSQL -t -A -c "select 'carga1=' || count(*) || ' publicadas=' || count(*) filter (where estado = 'publicado') from medicamentos"
   $PSQL -f "$1"

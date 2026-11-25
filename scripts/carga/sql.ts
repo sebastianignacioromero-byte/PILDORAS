@@ -56,7 +56,8 @@ export function generarSql(fichas: FichaCarga[], laboratorios: Map<string, strin
 
   return `-- Carga de fichas Píldoras desde el stock de Curie (${fecha}).
 -- ${fichas.length} fichas. Ejecutar completo en el SQL Editor de Supabase.
--- Requiere supabase/migracion_carga.sql. Si algo falla, no se guarda nada.
+-- Requiere supabase/migracion_carga.sql y migracion_panel.sql. Si algo falla, no se guarda nada.
+-- Las fichas editadas en el panel de administración no se modifican.
 begin;
 
 -- 1. Revisor
@@ -101,11 +102,12 @@ on conflict (slug) do update set
   nota_veredicto = excluded.nota_veredicto,
   estado = case when public.medicamentos.estado = 'publicado' then 'publicado' else excluded.estado end,
   revisado_por = excluded.revisado_por,
-  revisado_en = excluded.revisado_en;
+  revisado_en = excluded.revisado_en
+where not public.medicamentos.editada_en_panel;
 
 -- 4. Principios de cada ficha (se reemplazan)
 delete from public.medicamento_principios
-where medicamento_id in (select id from public.medicamentos where slug in (${fichas.map((f) => q(f.slug)).join(', ')}));
+where medicamento_id in (select id from public.medicamentos where not editada_en_panel and slug in (${fichas.map((f) => q(f.slug)).join(', ')}));
 ${filasPa.length === 0 ? '' : `
 with datos (ficha, principio, cantidad, unidad) as (values
 ${filasPa.join(',\n')}
@@ -113,7 +115,7 @@ ${filasPa.join(',\n')}
 insert into public.medicamento_principios (medicamento_id, principio_activo_id, cantidad, unidad)
 select m.id, pa.id, d.cantidad::numeric, d.unidad
 from datos d
-join public.medicamentos m on m.slug = d.ficha
+join public.medicamentos m on m.slug = d.ficha and not m.editada_en_panel
 join public.principios_activos pa on pa.slug = d.principio
 on conflict do nothing;
 `}
