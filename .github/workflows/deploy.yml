@@ -5,8 +5,8 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    # Todos los días a las 06:17 UTC, para recoger cambios de Supabase.
-    - cron: '17 6 * * *'
+    # Cada hora, para recoger los cambios hechos en el panel de administración.
+    - cron: '17 * * * *'
   repository_dispatch:
     # Webhook de Supabase al publicar o cambiar un veredicto (etapa 2).
     types: [supabase-publicado]

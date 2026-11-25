@@ -11,5 +11,6 @@ export default defineConfig({
   base,
   output: 'static',
   trailingSlash: 'always',
-  integrations: [sitemap()],
+  // El panel de administración no va en el sitemap.
+  integrations: [sitemap({ filter: (pagina) => !pagina.includes('/admin/') })],
 });

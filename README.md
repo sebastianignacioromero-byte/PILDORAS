@@ -55,7 +55,7 @@ Para probar el SQL en local (requiere PostgreSQL 16): `supabase/verificar.sh`.
 
 ## Publicación
 
-GitHub Actions (`.github/workflows/deploy.yml`) prueba, construye y publica en cada push a `main`, todos los días a las 06:17 UTC y a pedido desde la pestaña *Actions*.
+GitHub Actions (`.github/workflows/deploy.yml`) prueba, construye y publica en cada push a `main`, cada hora (minuto 17) y a pedido desde la pestaña *Actions*.
 
 - **Conectar Supabase:** en *Settings → Secrets and variables → Actions → Variables*, cree `DATOS_FUENTE=supabase`, `PUBLIC_SUPABASE_URL` y `PUBLIC_SUPABASE_ANON_KEY`.
 - **Pasar al subdominio de Curie:** cree `public/CNAME` con el dominio (por ejemplo `pildoras.farmaciascurie.cl`), defina las variables `SITIO_URL=https://pildoras.farmaciascurie.cl` y `SITIO_BASE=/`, y configure el registro CNAME en el DNS de Curie apuntando a `sebastianignacioromero-byte.github.io`.
@@ -83,3 +83,18 @@ Especificación: `docs/superpowers/specs/2026-10-30-carga-stock-design.md`. Los 
    ```
 
 4. En el SQL Editor de Supabase: ejecutar una vez `supabase/migracion_carga.sql` y luego `privado/carga.sql`. Se puede repetir con un stock nuevo: actualiza las fichas sin duplicarlas y nunca vuelve a borrador una ficha ya publicada.
+
+## Panel de administración
+
+Página privada en `/admin/` (sin enlaces, sin indexar). Especificación: `docs/superpowers/specs/2026-11-25-panel-admin-design.md`.
+
+1. En el SQL Editor de Supabase, ejecutar una vez `supabase/migracion_panel.sql`.
+2. Marcar al QF como administrador:
+
+   ```sql
+   update public.perfiles set rol = 'admin' where id = (select id from auth.users where email = '<correo del QF>');
+   ```
+
+3. Recomendado: en Supabase, *Authentication*, desactivar "Allow new users to sign up".
+
+Solo los administradores pueden guardar: la función `guardar_ficha` lo comprueba en la base. Lo guardado aparece en el sitio público con la publicación de cada hora. Las fichas editadas en el panel no se sobrescriben en cargas posteriores desde el stock.

@@ -1,0 +1,82 @@
+---
+// Panel de administración. No tiene enlaces desde el sitio, no se indexa y no va en el sitemap.
+// La seguridad está en Supabase: solo un administrador puede guardar (función guardar_ficha).
+import Base from '../../layouts/Base.astro';
+
+const url = process.env.PUBLIC_SUPABASE_URL || import.meta.env.PUBLIC_SUPABASE_URL;
+const clave = process.env.PUBLIC_SUPABASE_ANON_KEY || import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+---
+<Base titulo="Panel de administración" descripcion="Panel privado para editar las fichas de Píldoras." noindex>
+  <h1 class="titulo-panel">Panel de administración</h1>
+  <div id="panel" data-supabase-url={url} data-supabase-clave={clave}>
+    <p class="apagado">Cargando…</p>
+  </div>
+</Base>
+
+<script>
+  import { iniciarPanel } from '../../lib/admin/ui';
+  iniciarPanel(document.getElementById('panel')!);
+</script>
+
+<style is:global>
+  .titulo-panel { font-size: 1.8rem; }
+  #panel { display: grid; gap: 16px; }
+  #panel label { font-weight: 700; }
+  #panel input, #panel select, #panel textarea {
+    font: inherit; border: 2px solid var(--linea); border-radius: 12px; padding: 8px 10px; background: #fff; color: var(--tinta); min-width: 0;
+  }
+  #panel input:focus, #panel select:focus, #panel textarea:focus { outline: none; border-color: var(--marca); }
+  #panel .boton { font: inherit; font-weight: 700; background: var(--marca); color: #fff; border: 0; border-radius: 14px; padding: 12px 18px; cursor: pointer; }
+  #panel .boton-sec { font: inherit; font-weight: 700; background: #fff; color: var(--marca); border: 2px solid var(--linea); border-radius: 12px; padding: 8px 12px; cursor: pointer; }
+  .acceso { display: grid; gap: 8px; max-width: 420px; }
+  .aviso-panel { display: grid; gap: 12px; justify-items: start; }
+  .barra-panel { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; color: var(--apagado); }
+  .trabajo { display: grid; gap: 16px; align-items: start; }
+  @media (min-width: 960px) { .trabajo { grid-template-columns: 380px minmax(0, 1fr); } }
+  .columna-lista { display: grid; gap: 8px; }
+  @media (min-width: 960px) { .columna-lista { position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow: auto; } }
+  .casilla { display: flex; gap: 8px; align-items: center; }
+  .filtros { display: grid; gap: 6px; }
+  .filtros label { display: grid; gap: 2px; font-size: 0.85rem; }
+  .conteo { font-size: 0.85rem; color: var(--apagado); }
+  .lista-fichas { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  .lista-fichas li {
+    display: grid; grid-template-columns: 56px minmax(0, 1fr) 12px; gap: 10px; align-items: center;
+    padding: 8px; border-radius: 14px; cursor: pointer; border: 2px solid transparent;
+  }
+  .lista-fichas li:hover { background: var(--fondo); }
+  .lista-fichas li.activa { border-color: var(--marca); background: var(--fondo); }
+  .lista-fichas .mini { background: var(--alveolo); border-radius: 12px; padding: 4px; display: grid; }
+  .lista-fichas .mini svg { width: 100%; height: auto; }
+  .lista-fichas .datos { display: grid; gap: 2px; justify-items: start; font-size: 0.9rem; }
+  .lista-fichas .lab { color: var(--apagado); font-size: 0.8rem; }
+  .punto { width: 12px; height: 12px; border-radius: 50%; background: #e8a33d; }
+  .punto.revisada { background: var(--se-puede); }
+  .etiqueta-v { color: #fff; font-size: 0.75rem; font-weight: 700; padding: 3px 8px; border-radius: 8px; }
+  .sin-veredicto { font-size: 0.75rem; font-weight: 700; color: var(--no-debe); }
+  .paginas { display: flex; justify-content: space-between; }
+  .editor { display: grid; gap: 16px; }
+  .pila-ed { display: grid; gap: 8px; }
+  .pila-ed h3 { font-size: 1rem; margin-top: 8px; }
+  .vista-previa { background: var(--alveolo); border-radius: 999px; padding: 14px; display: grid; place-items: center; box-shadow: inset 0 3px 8px #0b6f6830; }
+  .vista-previa svg { width: 100%; max-width: 280px; height: auto; }
+  .botones-formas { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+  .botones-formas.chicos { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+  .botones-formas button, .botones-texto button {
+    font: inherit; font-size: 0.85rem; background: #fff; border: 2px solid var(--linea); border-radius: 14px; padding: 6px; cursor: pointer;
+    display: grid; gap: 4px; justify-items: center; color: var(--tinta);
+  }
+  .botones-formas button svg { width: 100%; max-width: 110px; height: auto; }
+  .botones-formas button.activo, .botones-texto button.activo { border-color: var(--marca); background: #e5f4f1; font-weight: 700; }
+  .botones-texto { display: flex; gap: 8px; flex-wrap: wrap; }
+  .botones-texto button { padding: 8px 14px; }
+  .fila-criterio { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .fila-criterio select { flex: 1; }
+  .principios { display: grid; gap: 8px; }
+  .fila-pa { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) 80px auto; gap: 6px; }
+  .acciones { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; position: sticky; bottom: 0; background: var(--fondo); padding: 10px 0; }
+  .errores { width: 100%; margin: 0; padding-left: 18px; color: var(--no-debe); font-weight: 700; }
+  .errores:empty { display: none; }
+  .estado-guardar, .estado-acceso { font-weight: 700; width: 100%; }
+  .vacio { color: var(--apagado); }
+</style>

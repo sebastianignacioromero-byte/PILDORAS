@@ -13,6 +13,8 @@ export default defineConfig({
     url: `http://localhost:${puerto}${base}`,
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,
+    // El panel de administración siempre usa Supabase: en las pruebas apunta a un servidor simulado.
+    env: { PUBLIC_SUPABASE_URL: 'https://falso.supabase.co', PUBLIC_SUPABASE_ANON_KEY: 'sb_publishable_prueba' },
   },
   projects: [
     { name: 'telefono', use: { browserName: 'chromium', viewport: { width: 375, height: 812 } } },
