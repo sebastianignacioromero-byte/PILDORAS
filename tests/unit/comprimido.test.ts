@@ -58,3 +58,15 @@ describe('descripcionComprimido', () => {
     expect(descripcionComprimido({ ...base, forma: 'otra', ranura: 'sin_ranura' })).toBe('Comprimido sin ranura');
   });
 });
+
+describe('ranuras múltiples en partes iguales', () => {
+  const xs = (s: string) => [...s.matchAll(/data-ranura x1="([\d.]+)"/g)].map((m) => Number(m[1]));
+  it('dividen el rectángulo en 4 partes iguales', () => {
+    const s = svgComprimido({ forma: 'rectangular', ranura: 'multiple', orientacion: 0, formaFarmaceutica: 'comprimido' });
+    expect(xs(s)).toEqual([65, 100, 135]);
+  });
+  it('dividen el cuadrado en 4 partes iguales', () => {
+    const s = svgComprimido({ forma: 'cuadrada', ranura: 'multiple', orientacion: 0, formaFarmaceutica: 'comprimido' });
+    expect(xs(s)).toEqual([76, 100, 124]);
+  });
+});

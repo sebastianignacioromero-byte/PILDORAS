@@ -57,10 +57,24 @@ export function descripcionComprimido(o: OpcionesComprimido): string {
   return ['Comprimido', ADJETIVO[o.forma], TEXTO_RANURA[o.ranura]].filter(Boolean).join(' ');
 }
 
+/** Extremos horizontales de cada silueta: las ranuras múltiples la dividen en cuartos iguales. */
+const ANCHO: Record<FormaGeometrica, [number, number]> = {
+  redonda: [54, 146],
+  ovalada: [28, 172],
+  oblonga: [24, 176],
+  capsular: [24, 176],
+  cuadrada: [52, 148],
+  rectangular: [30, 170],
+  triangular: [44, 156],
+  romboidal: [32, 168],
+  hexagonal: [48, 152],
+  otra: [54, 146],
+};
+
 const linea = (x1: number, y1: number, x2: number, y2: number, extra = '') =>
   `<line data-ranura x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${TINTA}" stroke-width="5" stroke-linecap="round"${extra}/>`;
 
-function ranuras(r: TipoRanura): string {
+function ranuras(r: TipoRanura, forma: FormaGeometrica): string {
   switch (r) {
     case 'sin_ranura':
       return '';
@@ -68,8 +82,10 @@ function ranuras(r: TipoRanura): string {
       return linea(100, 0, 100, 120);
     case 'doble_cruz':
       return linea(100, 0, 100, 120) + linea(0, 60, 200, 60);
-    case 'multiple':
-      return linea(70, 0, 70, 120) + linea(100, 0, 100, 120) + linea(130, 0, 130, 120);
+    case 'multiple': {
+      const [a, b] = ANCHO[forma];
+      return [1, 2, 3].map((k) => a + ((b - a) * k) / 4).map((x) => linea(x, 0, x, 120)).join('');
+    }
     case 'solo_decorativa':
       return linea(100, 0, 100, 120, ' stroke-dasharray="6 9"');
   }
@@ -107,7 +123,7 @@ export function svgComprimido(o: OpcionesComprimido): string {
     `<defs><clipPath id="${id}">${silueta}</clipPath></defs>` +
       `<g transform="translate(0 7)" fill="${SOMBRA}">${silueta}</g>` +
       `<g fill="#ffffff">${silueta}</g>` +
-      `<g clip-path="url(#${id})"><g transform="rotate(${grados} 100 60)">${ranuras(o.ranura)}</g></g>` +
+      `<g clip-path="url(#${id})"><g transform="rotate(${grados} 100 60)">${ranuras(o.ranura, o.forma)}</g></g>` +
       `<g fill="none" stroke="${TINTA}" stroke-width="4">${silueta}</g>`,
   );
 }
