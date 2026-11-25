@@ -18,7 +18,8 @@ $PSQL <<'SQL'
 create schema extensions;
 create schema auth;
 create table auth.users (id uuid primary key);
-create function auth.uid() returns uuid language sql stable as $$ select null::uuid $$;
+-- El usuario "conectado" se simula con: set test.uid = '<uuid>';
+create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('test.uid', true), '')::uuid $$;
 create role anon; create role authenticated;
 SQL
 $PSQL -f "$DIR/schema_partibilidad.sql"
@@ -43,6 +44,44 @@ $PSQL -f "$DIR/migracion_criterios.sql"
 $PSQL -t -A <<'SQL'
 select 'criterios_v2=' || count(*) || ' sin_textos=' || count(*) filter (where explicacion = '' or que_hacer = '' or como_reconocer = '') from criterios_particion;
 select 'ficha_v2=' || slug || '|' || (criterio_explicacion <> '') || '|' || (criterio_que_hacer <> '') from v_fichas_publicas;
+SQL
+
+# Panel de administración: guardar_ficha solo para admin, todo o nada.
+$PSQL -f "$DIR/migracion_carga.sql"
+$PSQL -f "$DIR/migracion_panel.sql"
+$PSQL -f "$DIR/migracion_panel.sql"
+$PSQL -t -A <<'SQL'
+insert into auth.users values ('00000000-0000-0000-0000-00000000000a'), ('00000000-0000-0000-0000-00000000000b');
+insert into perfiles (id, rol) values ('00000000-0000-0000-0000-00000000000a', 'admin'), ('00000000-0000-0000-0000-00000000000b', 'usuario') on conflict (id) do update set rol = excluded.rol;
+set test.uid = '00000000-0000-0000-0000-00000000000a';
+select guardar_ficha(jsonb_build_object(
+  'id', (select id from medicamentos where slug = 'losarvit-50-1'),
+  'nombre_comercial', 'Losarvit 50', 'laboratorio', 'Lab Andino',
+  'forma_farmaceutica', 'comprimido', 'liberacion', 'inmediata',
+  'forma_geometrica', 'cuadrada', 'ranura', 'doble_cruz', 'ranura_orientacion', 0,
+  'criterio', 'RANURA-LI', 'estado', 'publicado', 'nota', 'Parta por la ranura',
+  'principios', jsonb_build_array(jsonb_build_object('dci', 'Losartán', 'cantidad', 50, 'unidad', 'mg'),
+                                  jsonb_build_object('dci', 'Nuevo principio', 'cantidad', null, 'unidad', 'mg'))));
+select 'panel_guardado=' || forma_geometrica || '|' || ranura || '|' || laboratorio || '|' || forma_revisada || '|' || editada_en_panel || '|' || (revisado_por = '00000000-0000-0000-0000-00000000000a')
+  from medicamentos where slug = 'losarvit-50-1';
+select 'panel_principios=' || string_agg(pa.dci || ':' || coalesce(mp.cantidad::text, '-'), ',' order by pa.dci)
+  from medicamento_principios mp join principios_activos pa on pa.id = mp.principio_activo_id
+  join medicamentos m on m.id = mp.medicamento_id where m.slug = 'losarvit-50-1';
+select 'panel_lista=' || count(*) from v_admin_fichas;
+SQL
+# Un usuario sin rol admin es rechazado.
+$PSQL -t -A -v ON_ERROR_STOP=0 <<'SQL' 2>&1 | grep -o "Solo un administrador puede editar fichas" | sed 's/^/panel_no_admin=/'
+set test.uid = '00000000-0000-0000-0000-00000000000b';
+select guardar_ficha(jsonb_build_object('id', (select id from medicamentos where slug = 'losarvit-50-1'), 'nombre_comercial', 'X',
+  'forma_farmaceutica', 'comprimido', 'liberacion', 'inmediata', 'forma_geometrica', 'redonda', 'ranura', 'sin_ranura', 'estado', 'borrador', 'principios', '[]'::jsonb));
+SQL
+# Un error de validación no deja nada a medias (la forma sigue cuadrada).
+$PSQL -t -A -v ON_ERROR_STOP=0 <<'SQL' 2>&1 | grep -E "panel_|necesita" | sed 's/^.*ERROR: *//'
+set test.uid = '00000000-0000-0000-0000-00000000000a';
+select guardar_ficha(jsonb_build_object('id', (select id from medicamentos where slug = 'losarvit-50-1'), 'nombre_comercial', 'X',
+  'forma_farmaceutica', 'comprimido', 'liberacion', 'inmediata', 'forma_geometrica', 'redonda', 'ranura', 'sin_ranura',
+  'criterio', null, 'estado', 'publicado', 'principios', '[]'::jsonb));
+select 'panel_sin_cambios=' || forma_geometrica || '|' || nombre_comercial from medicamentos where slug = 'losarvit-50-1';
 SQL
 
 # Reportes: el público (anon) puede crear reportes pero no leerlos.
