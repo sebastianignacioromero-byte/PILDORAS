@@ -34,6 +34,8 @@ const clave = process.env.PUBLIC_SUPABASE_ANON_KEY || import.meta.env.PUBLIC_SUP
   .trabajo { display: grid; gap: 16px; align-items: start; }
   @media (min-width: 960px) { .trabajo { grid-template-columns: 380px minmax(0, 1fr); } }
   .columna-lista { display: grid; gap: 8px; }
+  .nueva-ficha { display: grid; gap: 6px; padding: 10px; border: 2px dashed var(--linea); border-radius: 14px; }
+  .nueva-ficha[hidden] { display: none; }
   @media (min-width: 960px) { .columna-lista { position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow: auto; } }
   .casilla { display: flex; gap: 8px; align-items: center; }
   .filtros { display: grid; gap: 6px; }

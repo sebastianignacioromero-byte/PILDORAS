@@ -1,8 +1,8 @@
 -- =====================================================================
 -- MIGRACIÓN PANEL DE ADMINISTRACIÓN - Píldoras
 -- Ejecutar una vez (se puede repetir). Requiere migracion_carga.sql.
--- Agrega las marcas de revisión, la vista de la lista del panel y la función
--- guardar_ficha, que guarda una ficha completa en una sola transacción y
+-- Agrega las marcas de revisión, la vista de la lista del panel, la función
+-- crear_ficha (fichas nuevas en borrador) y la función guardar_ficha, que guarda una ficha completa en una sola transacción y
 -- solo si quien la llama es administrador.
 -- =====================================================================
 
@@ -110,5 +110,30 @@ $$;
 
 revoke execute on function public.guardar_ficha(jsonb) from public, anon;
 grant execute on function public.guardar_ficha(jsonb) to authenticated;
+
+-- ---------- 4. Crear una ficha nueva desde el panel ----------
+-- Queda en borrador y marcada como editada en el panel (la carga del stock no la toca).
+create or replace function public.crear_ficha(p_nombre text, p_laboratorio text)
+returns table (id bigint, slug text)
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if not public.es_admin() then
+    raise exception 'Solo un administrador puede crear fichas.' using errcode = '42501';
+  end if;
+  if coalesce(trim(p_nombre), '') = '' then
+    raise exception 'Falta el nombre comercial.';
+  end if;
+  return query
+  insert into public.medicamentos (nombre_comercial, laboratorio, forma_farmaceutica, estado, editada_en_panel)
+  values (trim(p_nombre), nullif(trim(p_laboratorio), ''), 'comprimido', 'borrador', true)
+  returning medicamentos.id, medicamentos.slug;
+end;
+$$;
+
+revoke execute on function public.crear_ficha(text, text) from public, anon;
+grant execute on function public.crear_ficha(text, text) to authenticated;
 
 notify pgrst, 'reload schema';

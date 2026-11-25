@@ -84,6 +84,17 @@ select guardar_ficha(jsonb_build_object('id', (select id from medicamentos where
 select 'panel_sin_cambios=' || forma_geometrica || '|' || nombre_comercial from medicamentos where slug = 'losarvit-50-1';
 SQL
 
+# Nueva ficha desde el panel: solo admin, queda en borrador y marcada como editada en el panel.
+$PSQL -t -A <<'SQL'
+set test.uid = '00000000-0000-0000-0000-00000000000a';
+select 'panel_nueva_id=' || (id > 0) || '|' || slug from crear_ficha('Ficha Nueva 10 mg', 'Laboratorio X');
+select 'panel_nueva=' || estado || '|' || editada_en_panel || '|' || laboratorio || '|' || forma_revisada from medicamentos where nombre_comercial = 'Ficha Nueva 10 mg';
+SQL
+$PSQL -t -A -v ON_ERROR_STOP=0 <<'SQL' 2>&1 | grep -o "Solo un administrador puede crear fichas" | sed 's/^/panel_nueva_no_admin=/'
+set test.uid = '00000000-0000-0000-0000-00000000000b';
+select crear_ficha('Intrusa', '');
+SQL
+
 # Una carga del stock posterior no toca la ficha editada en el panel.
 $PSQL -t -A -c "alter table auth.users add column if not exists email text" -c "insert into auth.users (id, email) values ('00000000-0000-0000-0000-0000000000aa', 'qf@ejemplo.cl') on conflict (id) do update set email = excluded.email" >/dev/null
 $PSQL -f "$DIR/prueba-carga-sobre-panel.sql" >/dev/null

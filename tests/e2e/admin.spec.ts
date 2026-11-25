@@ -11,6 +11,8 @@ const fila = (id: number, nombre: string, extra: Record<string, unknown> = {}) =
 
 async function simularSupabase(page: Page, { rol = 'admin' } = {}) {
   const guardados: Record<string, unknown>[] = [];
+  const creadas: Record<string, unknown>[] = [];
+  Object.assign(guardados, { creadas });
   let fichas = [fila(1, 'Aciclovir 200 mg'), fila(2, 'Alopurinol 100 mg'), fila(3, 'Atenolol 50 mg')];
   await page.route(`${SUPA}/**`, async (ruta: Route) => {
     const u = new URL(ruta.request().url());
@@ -27,9 +29,14 @@ async function simularSupabase(page: Page, { rol = 'admin' } = {}) {
     if (u.pathname === '/rest/v1/perfiles') return json([{ rol }]);
     if (u.pathname === '/rest/v1/principios_activos') return json([{ dci: 'Aciclovir' }, { dci: 'Alopurinol' }]);
     if (u.pathname === '/rest/v1/v_admin_fichas') {
+      if (u.searchParams.get('id') === 'eq.99') return json([fila(99, 'Ficha Nueva 10 mg', { estado: 'borrador', criterio_codigo: null, principios: [] })]);
       if (u.searchParams.get('select') === 'laboratorio') return json(fichas.map((f) => ({ laboratorio: f.laboratorio })));
       const lista = u.searchParams.get('forma_revisada') === 'eq.false' ? fichas.filter((f) => !f.forma_revisada) : fichas;
       return json(lista, { 'content-range': `0-${lista.length - 1}/${lista.length}` });
+    }
+    if (u.pathname === '/rest/v1/rpc/crear_ficha') {
+      creadas.push(ruta.request().postDataJSON());
+      return json([{ id: 99, slug: 'ficha-nueva-10-mg-99' }]);
     }
     if (u.pathname === '/rest/v1/rpc/guardar_ficha') {
       const { p } = ruta.request().postDataJSON();
@@ -105,6 +112,26 @@ test.describe('panel de administración', () => {
     await page.locator('.lista-fichas li').nth(1).click();
     expect(mensaje).toContain('cambios sin guardar');
     await expect(page.getByLabel('Nombre comercial')).toHaveValue('Aciclovir 200 mg');
+  });
+
+  test('crea una ficha nueva en borrador y la abre en el editor', async ({ page }) => {
+    const guardados = await simularSupabase(page);
+    await entrar(page);
+    await page.getByRole('button', { name: 'Nueva ficha' }).click();
+    await page.getByLabel('Nombre de la nueva ficha').fill('Ficha Nueva 10 mg');
+    await page.getByLabel('Laboratorio de la nueva ficha').fill('Laboratorio X');
+    await page.getByRole('button', { name: 'Crear ficha' }).click();
+    await expect(page.getByLabel('Nombre comercial')).toHaveValue('Ficha Nueva 10 mg');
+    await expect(page.getByLabel('Estado', { exact: true })).toHaveValue('borrador');
+    expect((guardados as unknown as { creadas: unknown[] }).creadas).toEqual([{ p_nombre: 'Ficha Nueva 10 mg', p_laboratorio: 'Laboratorio X' }]);
+  });
+
+  test('no crea una ficha sin nombre', async ({ page }) => {
+    await simularSupabase(page);
+    await entrar(page);
+    await page.getByRole('button', { name: 'Nueva ficha' }).click();
+    await page.getByRole('button', { name: 'Crear ficha' }).click();
+    await expect(page.getByText('Escriba el nombre comercial.')).toBeVisible();
   });
 
   test('no deja publicar sin criterio', async ({ page }) => {

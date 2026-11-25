@@ -86,6 +86,14 @@ class Panel {
       <div class="barra-panel"><span>Panel de fichas · ${escapar(this.correo)}</span><button type="button" class="boton-sec" data-salir>Salir</button></div>
       <div class="trabajo">
         <aside class="tarjeta columna-lista">
+          <button type="button" class="boton" data-nueva>Nueva ficha</button>
+          <form class="nueva-ficha" hidden novalidate>
+            <label for="adm-nuevo-nombre">Nombre de la nueva ficha</label><input id="adm-nuevo-nombre" placeholder="Ej.: Losartan 50 mg" />
+            <label for="adm-nuevo-lab">Laboratorio de la nueva ficha</label><input id="adm-nuevo-lab" />
+            <div class="botones-texto"><button type="submit" class="boton">Crear ficha</button><button type="button" class="boton-sec" data-cancelar-nueva>Cancelar</button></div>
+            <p class="estado-nueva" role="status"></p>
+            <p class="apagado chico">Se crea en borrador; complete forma, criterio y principios activos antes de publicarla.</p>
+          </form>
           <label for="adm-buscar">Buscar por nombre o principio activo</label>
           <input id="adm-buscar" type="search" autocomplete="off" />
           <label class="casilla"><input type="checkbox" data-filtro="soloSinRevisar" checked /> Solo forma sin revisar</label>
@@ -128,8 +136,37 @@ class Panel {
         void this.cargarLista();
       }),
     );
+    const nueva = this.raiz.querySelector<HTMLFormElement>('.nueva-ficha')!;
+    this.raiz.querySelector('[data-nueva]')!.addEventListener('click', () => {
+      nueva.hidden = false;
+      nueva.querySelector<HTMLInputElement>('#adm-nuevo-nombre')!.focus();
+    });
+    nueva.querySelector('[data-cancelar-nueva]')!.addEventListener('click', () => (nueva.hidden = true));
+    nueva.addEventListener('submit', (ev) => (ev.preventDefault(), void this.crearFicha(nueva)));
     void this.cargarLista();
     void this.cargarOpciones();
+  }
+
+  private async crearFicha(form: HTMLFormElement) {
+    const estado = form.querySelector<HTMLElement>('.estado-nueva')!;
+    const nombre = form.querySelector<HTMLInputElement>('#adm-nuevo-nombre')!.value.trim();
+    const laboratorio = form.querySelector<HTMLInputElement>('#adm-nuevo-lab')!.value.trim();
+    if (!nombre) return void (estado.textContent = 'Escriba el nombre comercial.');
+    if (!this.puedeDescartar()) return;
+    estado.textContent = 'Creando…';
+    const { data, error } = await this.cliente.rpc('crear_ficha', { p_nombre: nombre, p_laboratorio: laboratorio });
+    const id = (data as { id: number }[] | null)?.[0]?.id;
+    if (error || !id) return void (estado.textContent = `No se pudo crear la ficha: ${error?.message ?? 'sin respuesta'}`);
+    const { data: filas, error: errLectura } = await this.cliente.from('v_admin_fichas').select('*').eq('id', id);
+    if (errLectura || !filas?.[0]) return void (estado.textContent = 'La ficha se creó, pero no se pudo abrir. Búsquela en la lista.');
+    form.reset();
+    form.hidden = true;
+    estado.textContent = '';
+    const ficha = desdeFila(filas[0]);
+    this.original = structuredClone(ficha);
+    this.actual = structuredClone(ficha);
+    this.pintarEditor();
+    await this.cargarLista();
   }
 
   private async cargarOpciones() {
